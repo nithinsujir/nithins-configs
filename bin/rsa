@@ -1,0 +1,4 @@
+echo "Authorizing on $1"
+cat .ssh/id_rsa.pub | ssh $1 'cat >> .ssh/authorized_keys'
+#echo ". .bash_aliases" | ssh $1 'cat >> .bashrc'
+#scp $HOME/.bash_aliases $1:

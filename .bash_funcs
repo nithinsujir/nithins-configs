@@ -1,0 +1,588 @@
+#!/bin/bash
+
+esn() {
+	sudo vim /etc/sysconfig/network-scripts/ifcfg-$1
+}
+
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+parse_hg_branch() {
+    curdir=`pwd`
+
+    while [ $curdir != "/" ]
+    do
+	    if [ -f $curdir/.hg/branch ]
+	    then
+		    echo "(`cat $curdir/.hg/branch`)"
+		    return
+	    fi
+
+	    curdir=`dirname $curdir`
+    done
+}
+
+cur_hg_bookmark() {
+    curdir=`pwd`
+
+    while [ $curdir != "/" ]
+    do
+	    if [ -f $curdir/.hg/bookmarks.current ]
+	    then
+		    echo "`cat $curdir/.hg/bookmarks.current`"
+		    return
+	    fi
+
+	    curdir=`dirname $curdir`
+    done
+
+}
+
+parse_hg_bookmark() {
+	book=$(cur_hg_bookmark)
+
+	if [[ x$book == x ]] ; then
+		return
+	fi
+
+	echo "($book)"
+}
+
+hgm() {
+	hg paths | grep -q tintri
+
+	if [[ $? -eq 0 && $HOSTNAME != "nsujir-vm.tintri.com" ]]
+	then
+		echo "Not in nsujir-vm"
+		return
+	fi
+
+	BR=`hg branch`
+
+	if [ $BR == "default" ]
+	then
+		hg up master
+	else
+		hg up master-$BR
+	fi
+}
+
+hgmf() {
+	BR=`hg branch`
+
+	if [ $BR == "default" ]
+	then
+		hg bookmark -f master
+	else
+		hg bookmark -f master-$BR
+	fi
+}
+
+hgp() {
+	if [[ $HOSTNAME != "nsujir-vm.tintri.com" ]]
+	then
+		echo "Not in nsujir-vm"
+		return
+	fi
+
+	# If branch not passed in use current branch
+	BR=${1:-$( hg branch )}
+
+	for repo in platform fs ui
+	do
+		pushd $TOPDIR/$repo > /dev/null
+		hg up $BR
+		hgm
+		hg pull -b .
+
+		hg up $BR
+		if [ $BR == "default" ]
+		then
+			hgb -f master
+		else
+			hgb -f master-$BR
+		fi
+
+		popd > /dev/null
+	done
+}
+
+hgbr() {
+	if [[ $? -eq 0 && $HOSTNAME != "nsujir-vm.tintri.com" ]]
+	then
+		echo "Not in nsujir-vm"
+		return
+	fi
+
+	BR=$1
+	BR_ROOT=`hg out -r $BR | grep changeset | head -n 1 | awk {'print $2;'}`
+
+	hg rebase -s $BR_ROOT -d .
+	hg up $BR
+}
+
+hgho() {
+	BR_ROOT=`hg out -r . | grep changeset | head -n 1 | awk {'print $2;'}`
+	hg histedit $BR_ROOT
+}
+
+cs() {
+	rm tags
+	rm cscope.*
+
+	find . -name "*.[ch]" | grep -Ev "sound|video|arch.arm|arch.frv|arch.blackfin|arch.cris|arch.microb|arch.powerpc|s390|arch.sh|bluetooth|infiniband|isdn|pcmcia|ceph|btrfs|fs.hfs|fs.hp|fs.jf|fs.ntfs|fs.jbd|fs.min|fs.nil|fs.ocf|fs.xfs|fs.nfs|ubifs|wireless|wimax|chelsio|.fufcache|drivers.media|drivers.input|drivers.atm|drivers.gpu|macintosh|m68k|xtensa|sparc|fs.nls|fs.cifs|squashfs|fs.befs|reiserfs|fs.gfs|fs.dlm|include.media|include.linux.usb|dvb|config.nls|config.media|hisax|usb|config.snd|hid|mellanox|net.ppp|net.hamradio|staging|alpha|avr32|unicore32|mn10300|arch.um|c6x|m32r|hexagon|h8300|parisc|mips|arch.score|openrisc|ia64|arch.tile|adfs|coda|fs.afs|fs.udf|fs.9p|fs.exofs|ncpfs|freevxfs|mfd|linux.input|config.input|mtd|touchscreen|irda|patches|ixgbe-2|ixgbe-3.2|ixgbe-3.3|igb-2|igb-3|mpt2sas-04|mpt2sas-07|scsi.mpt2" > cscope.files
+	find . -name "*.cpp" >> cscope.files
+
+	/usr/bin/cscope -bv
+	ctags -V -L cscope.files
+
+	find {scripts,tools} -type f  -exec grep -Il . {} \; | xargs file | grep -e Bourne -e "POSIX shell" | sed 's/:.*$//'  > cscope.scripts
+	ctags -aV -L cscope.scripts
+}
+
+
+rsa() {
+	echo "Authorizing on $1"
+	pushd $HOME > /dev/null
+	cat .ssh/id_rsa.pub | ssh $1 'cat >> .ssh/authorized_keys'
+	popd > /dev/null
+}
+
+sc() {
+	TRPM=`ls -lt $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/txos*.rpm | awk {'print $8;'} | head -n 1`
+	TVER=`echo $TRPM | sed 's/.*txos-//' | sed 's/.x86.*//'`
+	TREL=/var/ftp/txos_releases
+	TVM="test-vm205"
+
+	echo "Release: $TVER"
+	echo "Create remote dir $TREL/$TVER"
+	ssh root@pxesrv1 mkdir -p $TREL/$TVER
+
+	echo "scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:/tftpboot/images/txos/nsujir"
+	scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:/tftpboot/images/txos/nsujir/vmlinuz.$TVER
+
+	echo "scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:/tftpboot/images/txos/nsujir"
+	scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:/tftpboot/images/txos/nsujir/initrd.$TVER
+
+	echo "scp $TRPM root@pxesrv1:/$TREL/$TVER/"
+	scp $TRPM root@pxesrv1:/$TREL/$TVER/
+
+	if [ -f /tmp/nsujir.menu ]; then
+		OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's/.*vmlinuz.//')
+		mv /tmp/nsujir.menu /tmp/nsujir.menu.orig
+	fi
+
+	LABEL=$(date +"%b-%d %k:%M")
+
+	if [[ -n $1 ]]; then
+		PREFIX="$1-"
+	fi
+
+	if [ $OTVER != $TVER ]; then
+		# Need blank line at the end before EOF
+		/bin/cat > /tmp/nsujir.menu <<- EOF
+			MENU TITLE nsujir menu
+			LABEL nsujir $PREFIX$LABEL
+				MENU LABEL nsujir $PREFIX$LABEL
+				KERNEL images/txos/nsujir/vmlinuz.$TVER
+				APPEND initrd=images/txos/nsujir/initrd.$TVER NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder verbose ftpserver=10.10.10.186 installvers=$TVER devpassword=tintri99 nowdog
+
+		EOF
+	fi
+
+	if [ -f /tmp/nsujir.menu.orig ]; then
+		/bin/cat /tmp/nsujir.menu.orig >> /tmp/nsujir.menu
+	fi
+
+	scp /tmp/nsujir.menu root@pxesrv1:/tftpboot/pxelinux.cfg/
+
+	echo "scp $TRPM $TVM:txos/"
+	scp $TRPM $TVM:txos/
+
+	ssh $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
+}
+
+FS() {
+	pushd $TOPDIR/fs > /dev/null
+	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
+	cd $TOPDIR/bld_rs
+	scons -j16 "$@"
+	popd > /dev/null
+}
+
+BE() {
+	# Build extpkgs
+	pushd $TOPDIR/platform/distro/extpkgs/ > /dev/null
+
+	./build.sh -e build -j 16
+	[[ $? -ne 0 ]] && return
+	./build.sh -e install
+	[[ $? -ne 0 ]] && return
+
+	popd > /dev/null
+}
+
+BP() {
+	pushd $TOPDIR/platform/os > /dev/null
+
+	# Build os
+	./build.sh build -j 16
+	[[ $? -ne 0 ]] && return
+
+	./build.sh install
+	[[ $? -ne 0 ]] && return
+
+	popd > /dev/null
+}
+
+RMS() {
+	sudo rm -rf $TOPDIR/distro_bld/sysimage/initrd_image
+	sudo rm -rf $TOPDIR/distro_bld/sysimage/boot
+}
+
+MK() {
+	RMS
+	sudo $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
+}
+
+B() {
+	pushd $TOPDIR/platform/os > /dev/null
+
+	BP
+	BE
+	RMS
+	MK "$@"
+
+	popd > /dev/null
+}
+
+UI() {
+	pushd $TOPDIR/ui > /dev/null
+
+	./antbuild clean
+	./antbuild smis-clean
+	rm -rf hyper-v/smis/pegasus_tmp
+	hg purge hyper-v/
+	hg revert hyper-v/
+	./antbuild
+	popd > /dev/null
+}
+
+BT() {
+	diff $TOPDIR/platform/.hg/branch $TOPDIR/fs/.hg/branch
+	[[ $? -ne 0 ]] &&  {
+		echo "Branches don't match"
+		return
+	}
+
+	diff $TOPDIR/platform/.hg/branch $TOPDIR/ui/.hg/branch
+	[[ $? -ne 0 ]] &&  {
+		echo "Branches don't match"
+		return
+	}
+
+	FS
+	[[ $? -ne 0 ]] && return
+
+	UI
+	[[ $? -ne 0 ]] && return
+
+	pushd $TOPDIR/platform/os > /dev/null
+	./build.sh clean
+	popd > /dev/null
+	pushd $TOPDIR/platform/distro/extpkgs > /dev/null
+	./build.sh -e clean
+	popd > /dev/null
+	B "$@"
+}
+
+TC() {
+	rm -rf $TOPDIR/kbuild
+	rm -rf $TOPDIR/bld_rs
+	sudo rm -rf $TOPDIR/distro_bld
+}
+
+BTC() {
+	TC
+	BT
+}
+
+BRC() {
+	sudo rm $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/*
+	B
+}
+
+isol() {
+	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi -L OPERATOR sol activate
+}
+
+isold() {
+	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi -L OPERATOR sol deactivate
+}
+
+xsol() {
+	ipmitool -I lanplus -U admin -P admin -H $1-ipmi sol activate
+}
+
+xsold() {
+	ipmitool -I lanplus -U admin -P admin -H $1-ipmi sol deactivate
+}
+
+iu() {
+	local MNT=/ird
+	mkdir -p /ird
+
+	if [ -d $MNT/tmp ]
+	then
+		return
+	fi
+
+	boot_dom=$(/usr/local/tintri/bin/list_disks -i)
+
+	mount ${boot_dom}1 $MNT
+
+	if [ -d $MNT/tmp ]
+	then
+		return
+	fi
+
+	mkdir -p $MNT/tmp
+	cd $MNT/tmp
+	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
+	gunzip -c ../$INITRD | cpio -i
+	cd -
+}
+
+liu() {
+	local initrd=$(ls -1rt ../initrd* | tail -n 1)
+	gunzip -c $initrd | cpio -i
+}
+
+IU() {
+	local MNT=/ird
+
+	rm -rf $MNT/tmp
+
+	if grep -q $MNT /proc/mounts; then
+		umount $MNT
+	fi
+
+	iu
+}
+
+iz() {
+	local MNT=/ird
+	if [ ! -d $MNT/tmp ]
+	then
+		echo "initrd not exploded"
+		return
+	fi
+
+	cd $MNT/tmp
+	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
+	find . | cpio -H newc -o | gzip -1 > ../$INITRD
+	sync
+	cd -
+}
+
+liz() {
+	local initrd=$(ls -1rt ../initrd* | tail -n 1)
+	find . | cpio -H newc -o | gzip -1 > $initrd
+}
+
+scin() {
+	local MNT=/ird
+	iu
+
+	scp nsujir@nsujir-vm:/data/workspaces/build1/platform/os/extdrivers/lsi/mpt2sas-10.00.00.00/mpt2sas/mpt2sas.ko .
+	scp nsujir@nsujir-vm:/data/workspaces/build1/platform/os/extdrivers/diskdump/diskdump.ko .
+
+	cp diskdump.ko $MNT/tmp/lib/modules/`uname -r`/extra/
+	cp mpt2sas.ko $MNT/tmp/lib/modules/`uname -r`/extra/
+
+	cp diskdump.ko /lib/modules/`uname -r`/extra/
+	cp mpt2sas.ko /lib/modules/`uname -r`/extra/
+}
+
+scz() {
+	scin
+	iz
+
+}
+
+hgl() {
+	rev=.
+	p=
+
+	if [[ ! -z $1 && $1 == "-p" ]]
+	then
+		p="-p"
+		shift
+	fi
+
+	if [ ! -z $1 ]
+	then
+		rev=`hg book | grep " $1 " | awk {'print $2;'}`
+		shift
+	fi
+
+	# -p can be before or after the rev
+	if [[ ! -z $1 && $1 == "-p" ]]
+	then
+		p="-p"
+	fi
+
+	hg log -b . --rev "reverse(ancestors($rev))" $p
+}
+
+ff() {
+	repo=$(basename `pwd`)
+
+	if [[ $repo == "os" ]] ; then
+		dirs=(
+			extdrivers/lsi/mpt2sas-10.00.00.00/mpt2sas
+			extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas
+			extdrivers/intel/enet/ixgbe-3.11.33/src
+			extdrivers/nvx
+			extdrivers/diskdump
+			tools/bootctl
+			tools/coredump
+			tools/diskmgt
+			tools/savecore
+			tools/scripts
+			scripts/tools
+		)
+	elif [[ $repo == "fs" ]] ; then
+		dirs=(
+			src
+		)
+	else
+		echo "Unsupported location $repo"
+		return
+	fi
+
+	rm -rf .fufcache
+	rm fuf.files
+
+	mkdir -p .fufcache
+
+	for dirname in ${dirs[@]}; do
+		file $dirname/* | grep text | awk -F : {'print $1;'} >> fuf.files
+	done
+
+	cd .fufcache
+	for fil in `cat ../fuf.files`; do
+		echo $fil
+		ln -sf ../$fil .
+	done
+
+	cd -
+}
+
+hge() {
+	rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
+	rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
+	dest=/data/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
+	mkdir -p $dest
+
+	hg export -r $rev_start:$rev_end -o "$dest/%n-%m.patch"
+	echo "Patches exported to $dest"
+}
+
+btools() {
+	pushd $TOPDIR/platform/os/tools > /dev/null
+	./build.sh build -j 8
+	popd > /dev/null
+}
+
+tsh() {
+	target=$1
+
+	tsa $target
+
+	shift
+	ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$target $@
+}
+
+tcp() {
+	target=$1
+
+	tsa $target
+
+	if [[ ! $1 =~ : ]]; then
+		target=$target:
+	fi
+	shift
+	scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$@" root@$target
+}
+
+drpms() {
+	du -sh /*/workspaces/*/distro_bld/local_rpms/RPMS
+	du -sh /*/workspaces/*/kbuild
+	sudo find /*/workspaces/*/distro_bld/local_rpms/RPMS -iname "*.rpm" -mtime +5 -exec rm {} \;
+}
+
+cvm() {
+	tcp $1 ~/.bf
+	tcp $1:nsujir ~/tintri/vmstore-custom/
+	tsh $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
+	tsh $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
+	tsh $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
+	tsh $1 ln -sf /root/nsujir/.profile /root/
+	tsh $1 ln -sf /root/nsujir/.bashrc /root/
+}
+
+zsda() {
+	dd if=/dev/zero of=/dev/sda count=16
+	sync
+}
+
+ZSDA() {
+	zsda
+	reboot
+}
+
+# Link the last built util, fs and ui rpms
+lnt() {
+	TOPVER=$($TOPDIR/platform/distro/tools/gen_bldnum $TOPDIR/platform)
+
+	pushd $TOPDIR/distro_bld/local_rpms/RPMS/x86_64 > /dev/null
+
+	fbase=$(ls -1rt filesystem_base* | tail -n 1)
+	new_fbase=$(echo $fbase | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
+	sudo ln -f $fbase $new_fbase
+
+	ubase=$(ls -1rt ui_base* | tail -n 1)
+	new_ubase=$(echo $ubase | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
+	sudo ln -f $ubase $new_ubase
+
+	baseu=$(ls -1rt base_utils* | tail -n 1)
+	new_baseu=$(echo $baseu | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
+	sudo ln -f $baseu $new_baseu
+
+	popd > /dev/null
+}
+
+# grep script and usual accessed folders
+grs() {
+	dirs=(tools scripts ../distro/*overlay ../distro/spec ../distro/tools $TOPDIR/fs/src $TOPDIR/ui/platform)
+
+	for d in ${dirs[@]}; do
+		grep -n -r "$1" $d
+	done
+}
+
+# Upgrade txos
+upg() {
+	txos=$1
+	target=$2
+	/auto/e2e/bin/UpgradeTools.py install --rpmpath $txos $target
+}
+
+# Upgrade to latest default
+upgd() {
+	target=$1
+	/auto/e2e/bin/UpgradeTools.py install --branch default $target
+}
+

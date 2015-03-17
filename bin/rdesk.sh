@@ -1,0 +1,1 @@
+/home/nsujir/nithins-configs/scripts/rdesk.sh

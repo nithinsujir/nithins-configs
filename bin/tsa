@@ -1,0 +1,30 @@
+#!/usr/bin/expect
+
+set arg1 [lindex $argv 0]
+set multi_prompt {[#>$] }
+
+spawn /usr/bin/scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $env(HOME)/.ssh/id_rsa.pub root@$arg1:/tmp
+expect {
+	"password:" {
+		send -- "tintri99\n"
+		expect -re $multi_prompt
+	}
+
+	eof {
+		exit
+	}
+}
+
+
+spawn /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$arg1 
+expect "password:"
+
+send -- "tintri99\n"
+expect -re $multi_prompt
+
+send -- "cat /tmp/id_rsa.pub >> /root/.ssh/authorized_keys\n"
+expect -re $multi_prompt
+
+send -- "rm /tmp/id_rsa.pub\n"
+expect -re $multi_prompt
+

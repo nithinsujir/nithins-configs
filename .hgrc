@@ -1,0 +1,55 @@
+%include /auto/hg/tintri/hgrc.default
+
+[ui]
+username = nsujir
+editor = vim
+ignore = ~/.hgignore
+
+[extensions]
+color =
+purge =
+pager =
+rebase =
+patchbomb =
+extdiff =
+mq =
+histedit =
+progress =
+record =
+crecord = ~/nithins-configs/.hgext/crecord
+
+[pager]
+pager = LESS='FRX' less
+attend = log outgoing diff glog in blog incoming
+#ignore = histedit push record commit postreview import pull update merge rebase graft
+
+[merge-patterns]
+** = filemerge
+
+[merge-tools]
+filemerge.executable = kdiff3
+filemerge.args = $base $local $other -o $output
+
+[smtp]
+host = west.exch025.serverdata.net
+port = 587
+username = nsujir@tintri.com
+tls = starttls
+
+[email]
+from = Nithin Sujir <nsujir@tintri.com>
+
+[extdiff]
+cmd.vd = gvim
+opts.vd = -f '+next' '+execute "DirDiff" fnameescape(argv(0)) fnameescape(argv(1))'
+
+
+[tortoisehg]
+fontcomment = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+fontdiff = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+fontlog = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+fontoutputlog = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+fontlist = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+
+[hgview]
+interface = raw

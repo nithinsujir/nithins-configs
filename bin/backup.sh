@@ -1,0 +1,1 @@
+/home/nsujir/nc/scripts/backup.sh

@@ -1,0 +1,9 @@
+[user]
+	name = Nithin Nayak Sujir
+	email = nithinsujir@gmail.com
+[color]
+	ui = auto
+[core]
+	excludesfile = ~/.gitignore
+[push]
+	default = current

@@ -1,0 +1,19 @@
+#!/bin/bash
+set -x
+
+for DISPLAY in ":0.0" ":0.1"; do
+  Terminal --hide-menubar --hide-borders \
+    --hide-toolbars --maximize \
+    --command="bash -c 'TERM=screen-256color; tmux'" &
+  while [ -z "$(wmctrl -l | grep Terminal)" ]; do
+    sleep 1.05s
+  done
+  ID=$(wmctrl -l | awk '{if (match($4, /^Terminal/)) print $1 }')
+  xprop -id $ID -f _NET_WM_WINDOW_OPACITY 32c \
+    -set _NET_WM_WINDOW_OPACITY 3865470565 # ((2^32) - 1) * .9
+  xprop -id $ID -f _NET_WM_WINDOW_OPACITY_LOCKED 32c \
+    -set _NET_WM_WINDOW_OPACITY_LOCKED 1 # dont change opacity while inactive 
+  wmctrl -i -r $ID -b add,below       # always on bottom
+  # notice the subtle difference from the command below, which does not work
+  # wmctrl -r -i $ID -b add,below
+done

@@ -1,0 +1,14 @@
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set scrolloff=3
+set saney
+set startnormalmode
+
+noremap ; :
+noremap : ;
+noremap <Space> <C-f>
+
+inoremap fj <Esc>
+

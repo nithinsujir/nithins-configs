@@ -1,0 +1,12 @@
+#!/usr/bin/expect
+
+set arg1 [lindex $argv 0]
+set timeout 30
+
+spawn /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no sysadmin@$arg1-ipmi
+expect "password:"
+send "superuser\n"
+expect "#"
+send -- "reboot\n"
+expect "#"
+

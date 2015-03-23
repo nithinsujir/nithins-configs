@@ -215,8 +215,8 @@ inoremap <Tab> <C-p>
 "Set tab complete to local complete
 "inoremap <Tab> <C-x><C-p>
 
-inoremap fdb<Space> FCM_LOG_DBG("== [%s]: ", p->ifname);<Esc>13hi
-inoremap ner<Space> netdev_err(tp->dev, "== [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
+"inoremap fdb<Space> FCM_LOG_DBG("== [%s]: ", p->ifname);<Esc>13hi
+"inoremap ner<Space> netdev_err(tp->dev, "== [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
 inoremap psf<Space> printf("== [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
 inoremap prk<Space> printk(KERN_ERR "
 inoremap psk<Space> printk(KERN_ERR "== [%s:%d]\n", __func__, __LINE__);<Esc>24hi

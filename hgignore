@@ -28,3 +28,4 @@ os/tools/xybridge/ntbm_bench
 os/tools/xybridge/ntbm_stat
 os/tools/xybridge/ntbm_test
 os/tools/xybridge/plxreg
+*.o.d

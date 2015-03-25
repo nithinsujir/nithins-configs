@@ -243,7 +243,7 @@ RMS() {
 
 MK() {
 	RMS
-	sudo $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
+	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
 }
 
 B() {

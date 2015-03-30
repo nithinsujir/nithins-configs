@@ -89,15 +89,15 @@ _hgp() {
 	do
 		pushd $TOPDIR/$repo > /dev/null
 		hg up $BR
-		hgm
+		_hgm
 		hg pull -b .
 
 		hg up $BR
 		if [ $BR == "default" ]
 		then
-			hgb -f master
+			hg bookmarks -f master
 		else
-			hgb -f master-$BR
+			hg bookmarks -f master-$BR
 		fi
 
 		popd > /dev/null

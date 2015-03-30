@@ -595,3 +595,27 @@ upgd() {
 	/auto/e2e/bin/UpgradeTools.py install --branch default $target
 }
 
+SSHNVM() {
+	func=$1
+	typeset -f $func | ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no nsujir@nsujir-vm "$(cat);$@"
+}
+
+hgs() {
+	hname=$(/bin/hostname -s)
+
+	if [[ $hname == "nsujir-vm" ]]; then
+		hgdir=$1
+
+		if [[ -z $hgdir ]]; then
+			hg status
+		else
+			cd $hgdir
+			hg status
+		fi
+
+		return
+	fi
+
+	SSHNVM hgs `pwd`
+}
+

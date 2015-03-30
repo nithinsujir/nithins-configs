@@ -149,7 +149,7 @@ rsa() {
 	popd > /dev/null
 }
 
-sc() {
+_sc() {
 	TRPM=`ls -lt $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/txos*.rpm | awk {'print $8;'} | head -n 1`
 	TVER=`echo $TRPM | sed 's/.*txos-//' | sed 's/.x86.*//'`
 	TREL=/var/ftp/txos_releases
@@ -203,7 +203,11 @@ sc() {
 	ssh $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
 }
 
-FS() {
+sc() {
+	runfunc _sc "$@"
+}
+
+_FS() {
 	pushd $TOPDIR/fs > /dev/null
 	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
 	cd $TOPDIR/bld_rs
@@ -211,7 +215,11 @@ FS() {
 	popd > /dev/null
 }
 
-BE() {
+FS() {
+	runfunc _FS
+}
+
+_BE() {
 	# Build extpkgs
 	pushd $TOPDIR/platform/distro/extpkgs/ > /dev/null
 
@@ -221,6 +229,10 @@ BE() {
 	[[ $? -ne 0 ]] && return
 
 	popd > /dev/null
+}
+
+BE() {
+	runfunc _BE
 }
 
 BP() {
@@ -241,12 +253,16 @@ RMS() {
 	sudo rm -rf $TOPDIR/distro_bld/sysimage/boot
 }
 
-MK() {
+_MK() {
 	RMS
 	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
 }
 
-B() {
+MK() {
+	runfunc _MK
+}
+
+_B() {
 	pushd $TOPDIR/platform/os > /dev/null
 
 	BP
@@ -255,6 +271,10 @@ B() {
 	MK "$@"
 
 	popd > /dev/null
+}
+
+B() {
+	runfunc _B
 }
 
 UI() {
@@ -269,7 +289,7 @@ UI() {
 	popd > /dev/null
 }
 
-BT() {
+_BT() {
 	diff $TOPDIR/platform/.hg/branch $TOPDIR/fs/.hg/branch
 	[[ $? -ne 0 ]] &&  {
 		echo "Branches don't match"
@@ -297,15 +317,23 @@ BT() {
 	B "$@"
 }
 
-TC() {
+_TC() {
 	rm -rf $TOPDIR/kbuild
 	rm -rf $TOPDIR/bld_rs
 	sudo rm -rf $TOPDIR/distro_bld
 }
 
-BTC() {
+TC() {
+	runfunc _TC
+}
+
+_BTC() {
 	TC
 	BT
+}
+
+BTC() {
+	runfunc _BTC
 }
 
 BRC() {
@@ -596,34 +624,35 @@ upgd() {
 }
 
 sshnvm() {
-	local func=$1
-	typeset -f $func | ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no nsujir@nsujir-vm "$(cat);$@"
+	tgtdir=$1
+	shift
+
+	typeset -f | ssh nsujir@nsujir-vm "$(cat);cd $tgtdir;TOPDIR=$TOPDIR $@"
 }
 
 runfunc() {
 	local func=$1
 	shift
 
-	local cmd="$@"
+	local args="$@"
 	local hname=$(/bin/hostname -s)
 
 	if [[ $hname == "nsujir-vm" ]]; then
-		hgdir=$1
-
-		if [[ -z $hgdir ]]; then
-			$cmd
-		else
-			cd $hgdir
-			$cmd
-		fi
-
+		$func "$args"
 		return
 	fi
 
-	sshnvm $func `pwd`
+	sshnvm $PWD "$func $args"
+}
+
+_hgs() {
+	hg status
 }
 
 hgs() {
-	runfunc $0 "hg status"
+	runfunc _hgs
 }
 
+BT() {
+	runfunc _BT
+}

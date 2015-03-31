@@ -688,3 +688,61 @@ _hg() {
 hh() {
 	runfunc _hg "$@"
 }
+
+_bb() {
+	./build.sh build -j 16 "$@"
+}
+
+bb() {
+	runfunc _bb "$@"
+}
+
+_be() {
+	pushd $TOPDIR/platform/os/extdrivers > /dev/null
+	./build.sh build -j 16
+	popd > /dev/null
+}
+
+be() {
+	runfunc _be "$@"
+}
+
+_bec() {
+	pushd $TOPDIR/platform/os/extdrivers > /dev/null
+	./build.sh clean
+	popd > /dev/null
+}
+
+bec() {
+	runfunc _bec "$@"
+}
+
+_bi() {
+	./build.sh install
+}
+
+bi() {
+	runfunc _bi
+}
+
+_bt() {
+	pushd $TOPDIR/platform/os/tools > /dev/null
+	./build.sh build -j 16
+	popd > /dev/null
+}
+
+bt() {
+	runfunc _bt "$@"
+}
+
+_btc() {
+	pushd $TOPDIR/platform/os/tools > /dev/null
+	./build.sh clean
+	popd > /dev/null
+}
+
+btc() {
+	runfunc _btc "$@"
+}
+
+

@@ -2,7 +2,7 @@ set -x
 touch $HOME/.bash_local
 ln -sf $HOME/nithins-configs/.hgrc $HOME
 ln -sf $HOME/nithins-configs/hgignore $HOME/.hgignore
-ln -sf $HOME/nithins-configs/hgdiffinc $HOME/.hgdiffinc
+ln -sf $HOME/nithins-configs/hgdiffinc $HOME/hgdiffinc.txt
 ln -sf $HOME/nithins-configs/.tudurc $HOME
 ln -sf $HOME/nithins-configs/.gitconfig $HOME
 ln -sf $HOME/nithins-configs/.gitignore $HOME

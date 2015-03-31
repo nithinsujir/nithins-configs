@@ -1,0 +1,16 @@
+path:os/extdrivers
+path:os/scripts
+path:os/tools
+path:distro/spec
+path:distro/tools
+path:distro/initrd_overlay
+path:distro/fs_overlay
+path:distro/ui_overlay
+path:distro/sys_overlay
+path:distro/usb_overlay
+path:distro/baseutils_overlay
+glob:*.sh
+glob:*.mk
+glob:linux*/kernel
+glob:linux*/include
+glob:linux*/arch/x86

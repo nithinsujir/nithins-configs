@@ -745,4 +745,9 @@ btc() {
 	runfunc _btc "$@"
 }
 
+hgd() {
+	ssh nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg status" > /tmp/hdinc.txt
+	sed -i 's/^. /path:/' /tmp/hdinc.txt
+	hg diff -I "listfile:/tmp/hdinc.txt"
+}
 

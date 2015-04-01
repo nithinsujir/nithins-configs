@@ -117,7 +117,7 @@ _hgbr() {
 }
 
 hgbr() {
-	runfunc _hgbr
+	runfunc _hgbr $1
 }
 
 _hgho() {
@@ -217,7 +217,7 @@ _FS() {
 	pushd $TOPDIR/fs > /dev/null
 	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
 	cd $TOPDIR/bld_rs
-	scons -j16 "$@"
+	scons -j16
 	popd > /dev/null
 }
 

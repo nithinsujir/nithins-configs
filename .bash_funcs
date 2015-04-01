@@ -498,7 +498,9 @@ _ff() {
 		)
 	elif [[ $repo == "fs" ]] ; then
 		dirs=(
-			src
+			src/prog/*
+			src/lib/*
+			src/interface/*
 		)
 	else
 		echo "Unsupported location $repo"
@@ -681,7 +683,7 @@ _hgcm() {
 }
 
 hgcm() {
-	runfunc _hgcm "$@"
+	ssh -X -t nsujir@nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg commit -m \"$@\""
 }
 
 _hgc() {
@@ -697,7 +699,7 @@ _hg() {
 }
 
 hh() {
-	runfunc _hg "$@"
+	ssh -X -t nsujir@nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg $@"
 }
 
 _bb() {

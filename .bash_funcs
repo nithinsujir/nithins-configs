@@ -640,10 +640,12 @@ upgd() {
 sshnvm() {
 	tgtdir=$1
 	shift
+	func=$1
+	shift
 
 	# ssh -t -t will force a pseudo terminal even if stdin is not terminal
 	# (for color output)
-	typeset -f | ssh -t -t nsujir@nsujir-vm "$(cat);cd $tgtdir;TOPDIR=$TOPDIR $@"
+	typeset -f | ssh -t -t nsujir@nsujir-vm "$(cat);cd $tgtdir;TOPDIR=$TOPDIR $func \"$@\""
 }
 
 runfunc() {
@@ -658,7 +660,7 @@ runfunc() {
 		return
 	fi
 
-	sshnvm $PWD "$func $args"
+	sshnvm $PWD $func "$args"
 }
 
 BT() {
@@ -671,6 +673,15 @@ _hgc0() {
 
 hgc0() {
 	runfunc _hgc0
+}
+
+_hgcm() {
+	set -x
+	hg commit -m "$@"
+}
+
+hgcm() {
+	runfunc _hgcm "$@"
 }
 
 _hgc() {

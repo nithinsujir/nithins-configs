@@ -645,7 +645,7 @@ sshnvm() {
 
 	# ssh -t -t will force a pseudo terminal even if stdin is not terminal
 	# (for color output)
-	typeset -f | ssh -t -t nsujir@nsujir-vm "$(cat);cd $tgtdir;TOPDIR=$TOPDIR $func \"$@\""
+	typeset -f | ssh -t -t nsujir@nsujir-vm "$(cat);cd $tgtdir;TOPDIR=$TOPDIR $func $@"
 }
 
 runfunc() {

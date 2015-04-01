@@ -699,7 +699,12 @@ _hg() {
 }
 
 hh() {
-	ssh -X -t nsujir@nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg $@"
+	local hname=$(/bin/hostname -s)
+	if [[ $hname == "nsujir-vm" ]]; then
+		hg $@
+	else
+		ssh -X -t nsujir@nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg $@"
+	fi
 }
 
 _bb() {

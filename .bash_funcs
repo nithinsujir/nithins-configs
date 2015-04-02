@@ -764,6 +764,12 @@ btc() {
 }
 
 hgd() {
+	local hname=$(/bin/hostname -s)
+	if [[ $hname == "nsujir-vm" ]]; then
+		hg diff
+		return
+	fi
+
 	ssh nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg status" > /tmp/hdinc.txt
 	sed -i 's/^. /path:/' /tmp/hdinc.txt
 	hg diff -I "listfile:/tmp/hdinc.txt"

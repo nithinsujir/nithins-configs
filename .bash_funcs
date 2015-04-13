@@ -265,7 +265,7 @@ _MK() {
 }
 
 MK() {
-	runfunc _MK
+	runfunc _MK "$@"
 }
 
 _B() {
@@ -280,7 +280,7 @@ _B() {
 }
 
 B() {
-	runfunc _B
+	runfunc _B "$@"
 }
 
 UI() {
@@ -619,10 +619,13 @@ lnt() {
 
 # grep script and usual accessed folders
 grs() {
+	sstring=$1
+	shift
+
 	dirs=(tools scripts ../distro/*overlay ../distro/spec ../distro/tools $TOPDIR/fs/src $TOPDIR/ui/platform)
 
 	for d in ${dirs[@]}; do
-		grep -n -r "$1" $d
+		grep -n -r "$sstring" $@ $d
 	done
 }
 

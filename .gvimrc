@@ -274,6 +274,15 @@ autocmd InsertEnter *.c,*.h 3match TrailSpace /\s\+\%#\@<!$/
 autocmd InsertLeave *.c,*.h 3match TrailSpace /\s\+$/
 autocmd BufWinLeave call clearmatches()
 
+autocmd BufWinEnter,BufCreate,BufRead *.cpp set softtabstop=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp set tabstop=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp set shiftwidth=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp set expandtab
+
+autocmd BufWinLeave *.cpp set softtabstop=8
+autocmd BufWinLeave *.cpp set tabstop=8
+autocmd BufWinLeave *.cpp set shiftwidth=8
+autocmd BufWinLeave *.cpp set noexpandtab
 
 if version >= 703
 	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h set colorcolumn=81

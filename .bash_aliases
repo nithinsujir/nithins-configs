@@ -179,7 +179,7 @@ alias zi='zenity --info'
 alias p4opened='p4 opened'
 
 #Tintri
-alias assim='/auto/e2e/bin/assimilate.py --ignore_quarantined --ignore_owner'
+alias assim='/auto/e2e/bin/assimilate.py --ignore_quarantined --ignore_owner --ignore_running'
 #alias bb='./build.sh build -j 16'
 #alias be='pushd $TOPDIR/platform/os/extdrivers; ./build.sh build -j 16; popd'
 #alias bec='pushd $TOPDIR/platform/os/extdrivers; ./build.sh clean; popd'

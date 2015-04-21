@@ -108,6 +108,10 @@ hgp() {
 	runfunc _hgp
 }
 
+hgbd() {
+	hg bookmark -d $(cur_hg_bookmark)
+}
+
 _hgbr() {
 	BR=$1
 	BR_ROOT=`hg out -r $BR | grep changeset | head -n 1 | awk {'print $2;'}`

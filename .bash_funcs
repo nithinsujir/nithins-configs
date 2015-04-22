@@ -90,7 +90,7 @@ _hgp() {
 		pushd $TOPDIR/$repo > /dev/null
 		hg up $BR
 		_hgm
-		hg pull -b .
+		hg pull
 
 		hg up $BR
 		if [ $BR == "default" ]

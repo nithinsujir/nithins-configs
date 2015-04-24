@@ -782,3 +782,8 @@ hgd() {
 	hg diff -I "listfile:/tmp/hdinc.txt"
 }
 
+mt() {
+	title=$1
+	echo -ne "\e]62;$title\a"
+}
+

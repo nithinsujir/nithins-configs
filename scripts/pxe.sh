@@ -80,12 +80,12 @@ wipe_and_reboot() {
 	local tgt=$1
 
 	echo "Clearing partitions on $tgt"
-	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sda count=1024 status=none"
-	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sdb count=1024 status=none"
+	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sda count=1024"
+	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sdb count=1024"
 	$SSH $tgt "/bin/sync"
 
 	echo "Rebooting $tgt"
-	$SSH $tgt "/usr/bin/ipmitool chassis power reset"
+	$SSH $tgt "/usr/bin/ipmitool chassis power cycle"
 }
 
 wait_until_up() {
@@ -141,6 +141,9 @@ if [[ $? -ne 0 ]]; then
 	exit 1
 fi
 echo "$B is up"
+
+tsa $A
+tsa $B
 
 # Find the mac addresses
 AMAC=$($SSH $A "/bin/cat /sys/class/net/eth0/address")

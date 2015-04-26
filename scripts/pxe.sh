@@ -63,6 +63,7 @@ create_pxe_file() {
 	local ipaddr=$(/usr/bin/dig +short ${target}.tintri.com)
 	local rel=$($SSH pxesrv1 "/usr/bin/readlink /var/ftp/txos_releases/latest")
 	rel=${rel/-release-ndu/}
+	rel=${rel/-release-du/}
 
 	/bin/cat > /tmp/$filename <<-EOF
 # Auto pxe install for $tgt
@@ -74,6 +75,13 @@ LABEL txos
         APPEND initrd=images/txos/latest/initrd verbose NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder devinstall nowdog ipaddr=${ipaddr} netmask=255.255.0.0 gateway=10.40.0.1 devpassword=tintri99 installvers=$rel
 	
 	EOF
+}
+
+stop_services() {
+	# Stop services on secondary so as to not interfere
+	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service hamon stop\""
+	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service platmon stop\""
+	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service txos stop\""
 }
 
 wipe_and_reboot() {
@@ -160,6 +168,8 @@ echo "Copying pxe files $apxe and $bpxe to the pxe server"
 $SCP /tmp/$apxe root@pxesrv1:$PXE_PATH
 $SCP /tmp/$bpxe root@pxesrv1:$PXE_PATH
 
+stop_services
+
 # Wipe disks on A and reboot
 wipe_and_reboot $A
 
@@ -167,16 +177,21 @@ wipe_and_reboot $A
 echo "Waiting $HEADSTART sec for A to start install and initial steps"
 countdown $HEADSTART
 
-# Wipe and reboot B
-wipe_and_reboot $B
-
 # Delete the pxe files to avoid accidental install
-echo "Deleting pxe files $apxe and $bpxe"
+echo "Deleting pxe file $apxe for controller A"
 $SSH pxesrv1 "/bin/rm -f $PXE_PATH/$apxe"
 if [[ $? -ne 0 ]]; then
 	echo "Unable to delete $PXE_PATH/$apxe on the pxe server 1. Needs manual delete to avoid accidental reinstall!!"
 fi
 
+# Wipe and reboot B
+wipe_and_reboot $B
+
+# Wait 15 mins before deleting pxe file
+echo "Wait $HEADSTART sec to delete pxe file $bpxe for controller B"
+countdown $HEADSTART
+
+echo "Deleting pxe files $bpxe"
 $SSH pxesrv1 "/bin/rm -f $PXE_PATH/$bpxe"
 if [[ $? -ne 0 ]]; then
 	echo "Unable to delete $PXE_PATH/$bpxe on the pxe server 1. Needs manual delete to avoid accidental reinstall!!"

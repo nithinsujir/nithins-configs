@@ -79,6 +79,7 @@ LABEL txos
 
 stop_services() {
 	# Stop services on secondary so as to not interfere
+	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/usr/tintri/bin/ProcMonCmd -s disabled realstore\""
 	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service hamon stop\""
 	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service platmon stop\""
 	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service txos stop\""

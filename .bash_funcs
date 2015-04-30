@@ -49,7 +49,7 @@ parse_hg_bookmark() {
 	echo "($book)"
 }
 
-_hgm() {
+hgm() {
 	hg paths | grep -q tintri
 
 	BR=`hg branch`
@@ -62,11 +62,7 @@ _hgm() {
 	fi
 }
 
-hgm() {
-	runfunc _hgm
-}
-
-_hgmf() {
+hgmf() {
 	BR=`hg branch`
 
 	if [ $BR == "default" ]
@@ -77,11 +73,7 @@ _hgmf() {
 	fi
 }
 
-hgmf() {
-	runfunc _hgmf
-}
-
-_hgp() {
+hgp() {
 	# If branch not passed in use current branch
 	BR=${1:-$( hg branch )}
 
@@ -104,15 +96,11 @@ _hgp() {
 	done
 }
 
-hgp() {
-	runfunc _hgp
-}
-
 hgbd() {
 	hg bookmark -d $(cur_hg_bookmark)
 }
 
-_hgbr() {
+hgbr() {
 	BR=$1
 	BR_ROOT=`hg out -r $BR | grep changeset | head -n 1 | awk {'print $2;'}`
 
@@ -120,17 +108,9 @@ _hgbr() {
 	hg up $BR
 }
 
-hgbr() {
-	runfunc _hgbr $1
-}
-
-_hgho() {
+hgho() {
 	BR_ROOT=`hg out -r . | grep changeset | head -n 1 | awk {'print $2;'}`
 	hg histedit $BR_ROOT
-}
-
-hgho() {
-	runfunc _hgho
 }
 
 _cs() {
@@ -227,7 +207,7 @@ sc() {
 	runfunc _sc "$@"
 }
 
-_FS() {
+FS() {
 	pushd $TOPDIR/fs > /dev/null
 	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
 	cd $TOPDIR/bld_rs
@@ -235,11 +215,7 @@ _FS() {
 	popd > /dev/null
 }
 
-FS() {
-	runfunc _FS
-}
-
-_BE() {
+BE() {
 	# Build extpkgs
 	pushd $TOPDIR/platform/distro/extpkgs/ > /dev/null
 
@@ -249,10 +225,6 @@ _BE() {
 	[[ $? -ne 0 ]] && return
 
 	popd > /dev/null
-}
-
-BE() {
-	runfunc _BE
 }
 
 BP() {
@@ -273,16 +245,12 @@ RMS() {
 	sudo rm -rf $TOPDIR/distro_bld/sysimage/boot
 }
 
-_MK() {
+MK() {
 	RMS
 	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
 }
 
-MK() {
-	runfunc _MK "$@"
-}
-
-_B() {
+B() {
 	pushd $TOPDIR/platform/os > /dev/null
 
 	BP
@@ -291,10 +259,6 @@ _B() {
 	MK "$@"
 
 	popd > /dev/null
-}
-
-B() {
-	runfunc _B "$@"
 }
 
 UI() {
@@ -309,7 +273,7 @@ UI() {
 	popd > /dev/null
 }
 
-_BT() {
+BT() {
 	diff $TOPDIR/platform/.hg/branch $TOPDIR/fs/.hg/branch
 	[[ $? -ne 0 ]] &&  {
 		echo "Branches don't match"
@@ -337,23 +301,15 @@ _BT() {
 	B "$@"
 }
 
-_TC() {
+TC() {
 	rm -rf $TOPDIR/kbuild
 	rm -rf $TOPDIR/bld_rs
 	sudo rm -rf $TOPDIR/distro_bld
 }
 
-TC() {
-	runfunc _TC
-}
-
-_BTC() {
+BTC() {
 	TC
 	BT
-}
-
-BTC() {
-	runfunc _BTC
 }
 
 BRC() {
@@ -682,37 +638,16 @@ runfunc() {
 	sshnvm $PWD $func "$args"
 }
 
-BT() {
-	runfunc _BT
-}
-
-_hgc0() {
+hgc0() {
 	hg commit -m "bug 0"
 }
 
-hgc0() {
-	runfunc _hgc0
-}
-
-_hgcm() {
-	set -x
+hgcm() {
 	hg commit -m "$@"
 }
 
-hgcm() {
-	ssh -X -t nsujir@nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg commit -m \"$@\""
-}
-
-_hgc() {
-	hg commit "$@"
-}
-
 hgc() {
-	runfunc _hgc "$@"
-}
-
-_hg() {
-	hg "$@"
+	hg commit "$@"
 }
 
 hh() {
@@ -724,60 +659,36 @@ hh() {
 	fi
 }
 
-_bb() {
+bb() {
 	./build.sh build -j 16 "$@"
 }
 
-bb() {
-	runfunc _bb "$@"
-}
-
-_be() {
+be() {
 	pushd $TOPDIR/platform/os/extdrivers > /dev/null
 	./build.sh build -j 16
-	popd > /dev/null
-}
-
-be() {
-	runfunc _be "$@"
-}
-
-_bec() {
-	pushd $TOPDIR/platform/os/extdrivers > /dev/null
-	./build.sh clean
 	popd > /dev/null
 }
 
 bec() {
-	runfunc _bec "$@"
-}
-
-_bi() {
-	./build.sh install
+	pushd $TOPDIR/platform/os/extdrivers > /dev/null
+	./build.sh clean
+	popd > /dev/null
 }
 
 bi() {
-	runfunc _bi
+	./build.sh install
 }
 
-_bt() {
+bt() {
 	pushd $TOPDIR/platform/os/tools > /dev/null
 	./build.sh build -j 16
 	popd > /dev/null
 }
 
-bt() {
-	runfunc _bt "$@"
-}
-
-_btc() {
+btc() {
 	pushd $TOPDIR/platform/os/tools > /dev/null
 	./build.sh clean
 	popd > /dev/null
-}
-
-btc() {
-	runfunc _btc "$@"
 }
 
 hgd() {

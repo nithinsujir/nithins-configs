@@ -160,23 +160,33 @@ rsa() {
 }
 
 _sc() {
-	TRPM=`ls -lt $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/txos*.rpm | awk {'print $8;'} | head -n 1`
-	TVER=`echo $TRPM | sed 's/.*txos-//' | sed 's/.x86.*//'`
-	TREL=/var/ftp/txos_releases
-	TVM="test-vm205"
+	local TRPM=`ls -lt $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/txos*.rpm | awk {'print $8;'} | head -n 1`
+	local TVER=`echo $TRPM | sed 's/.*txos-//' | sed 's/.x86.*//'`
+	local TREL=/var/ftp/txos_releases
+	local TVM="test-vm205"
+	local TITN="/tftpboot/images/txos/nsujir"
 
 	echo "Release: $TVER"
 	echo "Create remote dir $TREL/$TVER"
 	ssh root@pxesrv1 mkdir -p $TREL/$TVER
+	ssh root@pxesrv1 mkdir -p $TITN/$TVER
 
-	echo "scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:/tftpboot/images/txos/nsujir"
-	scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:/tftpboot/images/txos/nsujir/vmlinuz.$TVER
+	echo "scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN"
+	scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN/vmlinuz.$TVER
+	ssh root@pxesrv1 "/bin/cp -f $TITN/vmlinuz.$TVER $TITN/$TVER/vmlinuz"
 
-	echo "scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:/tftpboot/images/txos/nsujir"
-	scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:/tftpboot/images/txos/nsujir/initrd.$TVER
+	echo "scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:$TITN"
+	scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:$TITN/initrd.$TVER
+	ssh root@pxesrv1 "/bin/cp -f $TITN/initrd.$TVER $TITN/$TVER/initrd"
 
-	echo "scp $TRPM root@pxesrv1:/$TREL/$TVER/"
-	scp $TRPM root@pxesrv1:/$TREL/$TVER/
+	# Setup latest symlinks
+	ssh root@pxesrv1 "rm -f /tftpboot/images/txos/latest_nsujir"
+	ssh root@pxesrv1 "rm -f $TREL/latest_nsujir"
+	ssh root@pxesrv1 "/bin/ln -sf nsujir/$TVER /tftpboot/images/txos/latest_nsujir"
+	ssh root@pxesrv1 "/bin/ln -sf $TVER $TREL/latest_nsujir"
+
+	echo "scp $TRPM root@pxesrv1:$TREL/$TVER/"
+	scp $TRPM root@pxesrv1:$TREL/$TVER/
 
 	if [ -f /tmp/nsujir.menu ]; then
 		OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's/.*vmlinuz.//')
@@ -196,7 +206,7 @@ _sc() {
 			LABEL nsujir $PREFIX$LABEL
 				MENU LABEL nsujir $PREFIX$LABEL
 				KERNEL images/txos/nsujir/vmlinuz.$TVER
-				APPEND initrd=images/txos/nsujir/initrd.$TVER NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder verbose ftpserver=10.10.10.186 installvers=$TVER devpassword=tintri99 nowdog
+				APPEND initrd=images/txos/nsujir/initrd.$TVER NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder verbose ftpserver=10.10.10.186 installvers=$TVER devpassword=tintri99 nowdog nosec
 
 		EOF
 	fi

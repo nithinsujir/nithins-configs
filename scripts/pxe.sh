@@ -61,7 +61,14 @@ create_pxe_file() {
 	local filename=$1
 	local tgt=$2
 	local ipaddr=$(/usr/bin/dig +short ${target}.tintri.com)
-	local rel=$($SSH pxesrv1 "/usr/bin/readlink /var/ftp/txos_releases/latest")
+	local install_ver=latest
+	local rel
+
+	if [[ -n $branch ]]; then
+		install_ver=latest_$branch
+	fi
+
+	rel=$($SSH pxesrv1 "/usr/bin/readlink /var/ftp/txos_releases/${install_ver}")
 	rel=${rel/-release-ndu/}
 	rel=${rel/-release-du/}
 
@@ -70,19 +77,19 @@ create_pxe_file() {
 default txos
 
 LABEL txos
-        MENU LABEL latest trunk (tty console)
-        KERNEL images/txos/latest/vmlinuz
-        APPEND initrd=images/txos/latest/initrd verbose NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder devinstall nowdog ipaddr=${ipaddr} netmask=255.255.0.0 gateway=10.40.0.1 devpassword=tintri99 installvers=$rel
+        MENU LABEL $install_ver trunk (tty console)
+        KERNEL images/txos/$install_ver/vmlinuz
+        APPEND initrd=images/txos/$install_ver/initrd verbose NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder devinstall nowdog ipaddr=${ipaddr} netmask=255.255.0.0 gateway=10.40.0.1 devpassword=tintri99 installvers=$rel nosec
 	
 	EOF
 }
 
 stop_services() {
-	# Stop services on secondary so as to not interfere
-	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/usr/tintri/bin/ProcMonCmd -s disabled realstore\""
-	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service hamon stop\""
-	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service platmon stop\""
-	$SSH $target "/usr/bin/ssh tt-peer-controller. \"/sbin/service txos stop\""
+	# Stop services on B so as to not interfere
+	$SSH $B "/usr/tintri/bin/ProcMonCmd -s disabled realstore"
+	$SSH $B "/sbin/service txos stop"
+	$SSH $B "/sbin/service hamon stop"
+	$SSH $B "/sbin/service platmon stop"
 }
 
 wipe_and_reboot() {
@@ -126,12 +133,14 @@ wait_until_up() {
 
 
 if [[ -z $1 ]]; then
-	echo "Usage: $0 <system>"
+	echo "Usage: $0 <system> [<branch>]"
 	exit
 fi
 
 target=$1
-echo "PXE Installing $target"
+branch=$2
+echo "PXE Installing $target $branch"
+
 
 A=${target}a
 B=${target}b

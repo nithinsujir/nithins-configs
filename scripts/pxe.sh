@@ -86,7 +86,7 @@ LABEL txos
 
 stop_services() {
 	# Stop services on B so as to not interfere
-	$SSH $B "/usr/tintri/bin/ProcMonCmd -s disabled realstore"
+	# $SSH $B "/usr/tintri/bin/ProcMonCmd -s disabled realstore"
 	$SSH $B "/sbin/service txos stop"
 	$SSH $B "/sbin/service hamon stop"
 	$SSH $B "/sbin/service platmon stop"
@@ -145,7 +145,7 @@ echo "PXE Installing $target $branch"
 A=${target}a
 B=${target}b
 
-
+# Verify systems are up
 /bin/ping -c 1 -W 3 $A
 if [[ $? -ne 0 ]]; then
 	echo "Unable to ping $A"
@@ -160,12 +160,22 @@ if [[ $? -ne 0 ]]; then
 fi
 echo "$B is up"
 
+# Add ssh key for auto login
 tsa $A
 tsa $B
 
 # Find the mac addresses
 AMAC=$($SSH $A "/bin/cat /sys/class/net/eth0/address")
+if [[ $? -ne 0 ]]; then
+	echo "Unable to get mac for $A"
+	exit 5
+fi
+
 BMAC=$($SSH $B "/bin/cat /sys/class/net/eth0/address")
+if [[ $? -ne 0 ]]; then
+	echo "Unable to get mac for $B"
+	exit 5
+fi
 
 apxe=$(pxefy_mac $AMAC)
 bpxe=$(pxefy_mac $BMAC)

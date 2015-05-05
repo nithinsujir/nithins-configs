@@ -177,6 +177,9 @@ _sc() {
 
 	if [[ -n $1 ]]; then
 		PREFIX="$1-"
+	else
+		PREFIX=$(hg bookmark | grep "*" | awk {'print $2'})
+		PREFIX="$PREFIX-"
 	fi
 
 	if [ $OTVER != $TVER ]; then

@@ -615,6 +615,11 @@ upgd() {
 	/auto/e2e/bin/UpgradeTools.py install --branch default $target
 }
 
+updb() {
+	local target=$1
+	/auto/e2e/bin/UpgradeTools.py populatedb $target
+}
+
 sshnvm() {
 	tgtdir=$1
 	shift

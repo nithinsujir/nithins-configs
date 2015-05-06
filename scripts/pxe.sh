@@ -117,10 +117,10 @@ wait_until_up() {
 		return 1
 	fi
 	echo "$target is up"
+	tsa $target
 
 	# Wait until peer is up
 	echo "Waiting upto $PEER_WAIT for peer to be up"
-	tsa $target
 	countdown_cmd $PEER_WAIT $SSH $target "/bin/ping -c 1 -W 3 tt-peer-controller."
 	if [[ $? -ne 0 ]]; then
 		echo "Timeout waiting for peer to be up"
@@ -224,13 +224,12 @@ if [[ -e /auto/e2e/bin/assimilate.py ]]; then
 	echo "System is up. Assimilating"
 	/auto/e2e/bin/assimilate.py --ignore_quarantined --ignore_owner --ignore_running $target
 
-	# The first assimilate will reboot the system in the middle of the
-	# process. Wait until up and rerun again.
-	#echo "System rebooting. Wait until up to run assimilate a 2nd time"
-	#sleep 30
-	#wait_until_up
-	#echo "System is up after reboot. Assimilating"
-	#/auto/e2e/bin/assimilate.py --ignore_quarantined --ignore_owner --ignore_running $target
+	echo "System rebooting. Wait until up to run populatedb"
+	sleep 30
+	wait_until_up
+	echo "System is up after reboot. Populating db"
+	$SSH $target "/usr/bin/java -jar /opt/tintri/thrift_to_soap.jar localhost SystemManagementService setConsoleOobStates true true"
+	/auto/e2e/bin/UpgradeTools.py populatedb $target
 else
 	echo "System is up. Run assimilate"
 fi

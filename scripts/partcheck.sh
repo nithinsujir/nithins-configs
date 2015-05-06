@@ -5,7 +5,7 @@ SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel
 
 print_tgts() {
 	for dn in m h; do
-		for ((i=1; i<=15; i++)); do
+		for ((i=1; i<=18; i++)); do
 			echo taf${dn}${i}
 		done
 	done
@@ -17,26 +17,27 @@ if [[ ! -z $1 ]]; then
 	tgts=($@)
 fi
 
-echo "Corefile Partition Upgrade Status"
+echo "          Corefile Partition Upgrade Status"
+echo "---------------------------------------------------"
 for tgt in ${tgts[@]}; do
-	echo -n "$tgt: "
 	/bin/ping -c 1 -W 3 $tgt 2>&1 > /dev/null
 	if [[ $? -ne 0 ]]; then
-		echo "            *** Not reachable!"
-		continue
-	fi
-
-	tsa $tgt 2>&1 > /dev/null
-	corepart=$($SSH root@$tgt "/bin/grep md0p6 /proc/partitions" | /usr/bin/awk {'print $3;'})
-
-	if [[ $? -eq 0 ]]; then
-		if [[ $corepart -gt 85000000 ]]; then
-			echo "      Yes"
-		else
-			echo "                                       *** No!!"
-		fi
+		result="   [Unreachable]"
 	else
-		echo "Unable to determine core partition size"
+		tsa $tgt 2>&1 > /dev/null
+		corepart=$($SSH root@$tgt "/bin/grep md0p6 /proc/partitions" | /usr/bin/awk {'print $3;'})
+
+		if [[ $? -eq 0 ]]; then
+			if [[ $corepart -gt 85000000 ]]; then
+				result="                            Yes"
+			else
+				result="       No!"
+			fi
+		else
+			result="Unable to determine core partition size"
+		fi
 	fi
+
+	printf "%08s %s\n" $tgt "$result"
 done
 

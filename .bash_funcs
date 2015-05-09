@@ -100,6 +100,11 @@ hgbd() {
 	hg bookmark -d $(cur_hg_bookmark)
 }
 
+HGMF() {
+	hgbd
+	hgmf
+}
+
 hgbr() {
 	BR=$1
 	BR_ROOT=`hg out -r $BR | grep changeset | head -n 1 | awk {'print $2;'}`

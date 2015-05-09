@@ -17,7 +17,7 @@ if [[ ! -z $1 ]]; then
 	tgts=($@)
 fi
 
-echo "          Corefile Partition Upgrade Status"
+echo "          Model Upgrade Status"
 echo "---------------------------------------------------"
 for tgt in ${tgts[@]}; do
 	/bin/ping -c 1 -W 3 $tgt 2>&1 > /dev/null
@@ -26,18 +26,18 @@ for tgt in ${tgts[@]}; do
 		sysvers="[Unknown]"
 	else
 		tsa $tgt 2>&1 > /dev/null
-		corepart=$($SSH root@$tgt "/bin/grep md0p6 /proc/partitions" | /usr/bin/awk {'print $3;'})
 		sysvers=
+		dsig_model=$($SSH root@$tgt "/usr/local/tintri/bin/disksig-install -m")
 
 		if [[ $? -eq 0 ]]; then
-			if [[ $corepart -gt 85000000 ]]; then
-				result="                            Yes"
-			else
+			if [[ $dsig_model =~ DN ]]; then
 				result="       No!"
 				sysvers=$($SSH root@$tgt "/usr/local/tintri/bin/sysvers")
+			else
+				result="                            Yes"
 			fi
 		else
-			result="Unable to determine core partition size"
+			result="disksig-install -m failed"
 		fi
 	fi
 

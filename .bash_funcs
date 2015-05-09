@@ -716,3 +716,9 @@ mt() {
 	echo -ne "\e]62;$title\a"
 }
 
+oob() {
+	target=$1
+
+	ssh root@$target "/usr/bin/java -jar /opt/tintri/thrift_to_soap.jar localhost SystemManagementService setConsoleOobStates true true"
+}
+

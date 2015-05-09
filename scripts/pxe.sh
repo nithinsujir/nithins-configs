@@ -96,8 +96,8 @@ wipe_and_reboot() {
 	local tgt=$1
 
 	echo "Clearing partitions on $tgt"
-	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sda count=1024"
-	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sdb count=1024"
+	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sda count=1024 oflag=direct"
+	$SSH $tgt "/bin/dd if=/dev/zero of=/dev/sdb count=1024 oflag=direct"
 	$SSH $tgt "/bin/sync"
 
 	echo "Rebooting $tgt"

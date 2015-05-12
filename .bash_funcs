@@ -625,6 +625,11 @@ updb() {
 	/auto/e2e/bin/UpgradeTools.py populatedb $target
 }
 
+pxed() {
+	local target=$1
+	/auto/e2e/bin/rspxeinstall.py pxeinstall --branch default $target
+}
+
 sshnvm() {
 	tgtdir=$1
 	shift

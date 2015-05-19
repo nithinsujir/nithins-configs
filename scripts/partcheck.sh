@@ -17,8 +17,8 @@ if [[ ! -z $1 ]]; then
 	tgts=($@)
 fi
 
-echo "          Corefile Partition Upgrade Status"
-echo "---------------------------------------------------"
+echo "                    Corefile Partition Upgrade Status"
+echo "---------------------------------------------------------------------------"
 for tgt in ${tgts[@]}; do
 	/bin/ping -c 1 -W 3 $tgt 2>&1 > /dev/null
 	if [[ $? -ne 0 ]]; then
@@ -30,7 +30,13 @@ for tgt in ${tgts[@]}; do
 		sysvers=
 
 		if [[ $? -eq 0 ]]; then
-			if [[ $corepart -gt 85000000 ]]; then
+			if [[ $tgt =~ tafh ]]; then
+				coremin=150000000
+			else
+				coremin=90000000
+			fi
+
+			if [[ $corepart -gt $coremin ]]; then
 				result="                            Yes"
 			else
 				result="       No!"

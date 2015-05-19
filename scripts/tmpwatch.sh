@@ -11,7 +11,7 @@ dirs=(
 )
 
 for d in ${dirs[@]}; do
-	/usr/bin/sudo /usr/sbin/tmpwatch -mv 7d ${d}/distro_bld
-	/usr/bin/sudo /usr/sbin/tmpwatch -mv 7d ${d}/kbuild
+	/usr/sbin/tmpwatch -mvf 7d ${d}/distro_bld
+	/usr/sbin/tmpwatch -mvf 7d ${d}/kbuild/install.d
 done
 

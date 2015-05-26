@@ -300,12 +300,12 @@ BT() {
 	UI
 	[[ $? -ne 0 ]] && return
 
-	pushd $TOPDIR/platform/os > /dev/null
-	./build.sh clean
-	popd > /dev/null
-	pushd $TOPDIR/platform/distro/extpkgs > /dev/null
-	./build.sh -e clean
-	popd > /dev/null
+	#pushd $TOPDIR/platform/os > /dev/null
+	#./build.sh clean
+	#popd > /dev/null
+	#pushd $TOPDIR/platform/distro/extpkgs > /dev/null
+	#./build.sh -e clean
+	#popd > /dev/null
 	B "$@"
 }
 

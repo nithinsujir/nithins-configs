@@ -11,30 +11,30 @@ parse_git_branch() {
 parse_hg_branch() {
     curdir=`pwd`
 
-    while [ $curdir != "/" ]
+    while [ "$curdir" != "/" ]
     do
-	    if [ -f $curdir/.hg/branch ]
+	    if [ -f "$curdir/.hg/branch" ]
 	    then
 		    echo "(`cat $curdir/.hg/branch`)"
 		    return
 	    fi
 
-	    curdir=`dirname $curdir`
+	    curdir=`dirname "$curdir"`
     done
 }
 
 cur_hg_bookmark() {
     curdir=`pwd`
 
-    while [ $curdir != "/" ]
+    while [ "$curdir" != "/" ]
     do
-	    if [ -f $curdir/.hg/bookmarks.current ]
+	    if [ -f "$curdir/.hg/bookmarks.current" ]
 	    then
 		    echo "`cat $curdir/.hg/bookmarks.current`"
 		    return
 	    fi
 
-	    curdir=`dirname $curdir`
+	    curdir=`dirname "$curdir"`
     done
 
 }

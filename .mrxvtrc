@@ -45,7 +45,7 @@ Mrxvt.macro.Shift+KP_Subtract:		ResizeFont -1
 #
 # ---------------------------------------------------------------------------- #
 Mrxvt.macro.Ctrl+t:		NewTab
-#Mrxvt.macro.Ctrl+w:		Close 0
+Mrxvt.macro.Ctrl+Alt+w:		Close 0
 Mrxvt.macro.Add+Ctrl+w:		ToggleHold -6
 Mrxvt.macro.Ctrl+Shift+q:		Close
 
@@ -151,12 +151,12 @@ Mrxvt.macro.Ctrl+Shift+greater:		MoveTab +1
 # Mrxvt.macro.Shift+Print:		PrintScreen Full
 
 # More / less opaque
-Mrxvt.macro.Ctrl+Shift+u:		Esc \e]70;+5\a
-Mrxvt.macro.Ctrl+Shift+o:		Esc \e]70;-5\a
+#Mrxvt.macro.Ctrl+Shift+u:		Esc \e]70;+5\a
+#Mrxvt.macro.Ctrl+Shift+o:		Esc \e]70;-5\a
 
 # More / less transparent
-Mrxvt.macro.Ctrl+Shift+j:		Esc \e]67;+5\a
-Mrxvt.macro.Ctrl+Shift+k:		Esc \e]67;-5\a
+#Mrxvt.macro.Ctrl+Shift+j:		Esc \e]67;+5\a
+#Mrxvt.macro.Ctrl+Shift+k:		Esc \e]67;-5\a
 
 # Toggle transparency
 Mrxvt.macro.Ctrl+Shift+r:		ToggleTransparency
@@ -186,7 +186,7 @@ Mrxvt.macro.Ctrl+Shift+v:		Paste
 Mrxvt.macro.Shift+Delete:		SetTitle
 
 # Clear scroll back and execute command
-Mrxvt.macro.Primary+Shift+Return:	Esc \ec
+#Mrxvt.macro.Primary+Shift+Return:	Esc \ec
 Mrxvt.macro.Primary+Add+Shift+Return:	Str ^M
 
 #

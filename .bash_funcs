@@ -118,7 +118,7 @@ hgho() {
 	hg histedit $BR_ROOT
 }
 
-_cs() {
+cs() {
 	rm tags
 	rm cscope.*
 
@@ -132,11 +132,6 @@ _cs() {
 	ctags -aV -L cscope.scripts
 }
 
-cs() {
-	runfunc _cs
-}
-
-
 rsa() {
 	echo "Authorizing on $1"
 	pushd $HOME > /dev/null
@@ -144,7 +139,7 @@ rsa() {
 	popd > /dev/null
 }
 
-_sc() {
+sc() {
 	local TRPM=`ls -lt $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/txos*.rpm | awk {'print $8;'} | head -n 1`
 	local TVER=`echo $TRPM | sed 's/.*txos-//' | sed 's/.x86.*//'`
 	local TREL=/var/ftp/txos_releases
@@ -209,10 +204,6 @@ _sc() {
 	scp $TRPM $TVM:txos/
 
 	ssh $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
-}
-
-sc() {
-	runfunc _sc "$@"
 }
 
 FS() {
@@ -448,7 +439,7 @@ hgl() {
 	hg log -b . --rev "reverse(ancestors($rev))" $p
 }
 
-_ff() {
+ff() {
 	repo=$(basename `pwd`)
 
 	if [[ $repo == "os" ]] ; then
@@ -503,11 +494,7 @@ _ff() {
 	cd -
 }
 
-ff() {
-	runfunc _ff
-}
-
-_hge() {
+hge() {
 	rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
 	rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
 	dest=/data/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
@@ -515,10 +502,6 @@ _hge() {
 
 	hg export -r $rev_start:$rev_end -o "$dest/%n-%m.patch"
 	echo "Patches exported to $dest"
-}
-
-hge() {
-	runfunc _hge
 }
 
 btools() {

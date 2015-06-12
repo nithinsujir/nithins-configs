@@ -734,3 +734,27 @@ oob() {
 	ssh root@$target "/usr/bin/java -jar /opt/tintri/thrift_to_soap.jar localhost SystemManagementService setConsoleOobStates true true"
 }
 
+sai() {
+	local pkgmgr=apt-get
+
+	if [[ -e /usr/bin/dnf ]]; then
+		pkgmgr=dnf
+	elif [[ -e /usr/bin/yum ]]; then
+		pkgmgr=yum
+	fi
+
+	sudo $pkgmgr install "$@"
+}
+
+sar() {
+	local pkgmgr=apt-get
+
+	if [[ -e /usr/bin/dnf ]]; then
+		pkgmgr=dnf
+	elif [[ -e /usr/bin/yum ]]; then
+		pkgmgr=yum
+	fi
+
+	sudo $pkgmgr remove "$@"
+}
+

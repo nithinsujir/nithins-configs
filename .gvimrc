@@ -65,6 +65,7 @@ set softtabstop=8
 set switchbuf=usetab
 set ts=8
 set wildignore=*.o,*.swp,*.bak,*.pyc
+set wildignorecase
 set wildmode=list:longest
 set winaltkeys=no
 set writebackup

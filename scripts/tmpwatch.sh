@@ -15,3 +15,5 @@ for d in ${dirs[@]}; do
 	/usr/sbin/tmpwatch -mvf 7d ${d}/kbuild/install.d
 done
 
+/usr/sbin/tmpwatch -mvf 15d /u/nsujir/txos
+

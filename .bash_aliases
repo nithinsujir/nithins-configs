@@ -46,7 +46,7 @@ alias giendev='git send-email --smtp-server=mail.broadcom.com --to davem@davemlo
 alias gien='git send-email --suppress-cc=all --no-signed-off-by-cc --smtp-server=mail.broadcom.com --to nsujir@broadcom.com'
 alias GIES='git send-email --smtp-server=mail.broadcom.com --to stable@vger.kernel.org'
 alias gif='git format-patch -s'
-alias gi='grep -I -i'
+alias gi='grep -I -i -n'
 alias gih='git help'
 alias gil='git log'
 alias gimb='git checkout master; git branch'

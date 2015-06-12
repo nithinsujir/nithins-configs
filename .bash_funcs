@@ -148,25 +148,25 @@ sc() {
 
 	echo "Release: $TVER"
 	echo "Create remote dir $TREL/$TVER"
-	ssh root@pxesrv1 mkdir -p $TREL/$TVER
-	ssh root@pxesrv1 mkdir -p $TITN/$TVER
+	ssh -o loglevel=error root@pxesrv1 mkdir -p $TREL/$TVER
+	ssh -o loglevel=error root@pxesrv1 mkdir -p $TITN/$TVER
 
 	echo "scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN"
-	scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN/vmlinuz.$TVER
-	ssh root@pxesrv1 "/bin/cp -f $TITN/vmlinuz.$TVER $TITN/$TVER/vmlinuz"
+	scp -o loglevel=error $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN/vmlinuz.$TVER
+	ssh -o loglevel=error root@pxesrv1 "/bin/cp -f $TITN/vmlinuz.$TVER $TITN/$TVER/vmlinuz"
 
-	echo "scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:$TITN"
-	scp $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:$TITN/initrd.$TVER
-	ssh root@pxesrv1 "/bin/cp -f $TITN/initrd.$TVER $TITN/$TVER/initrd"
+	echo "scp -o loglevel=error $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:$TITN"
+	scp -o loglevel=error $TOPDIR/distro_bld/sysimage/boot/initrd root@pxesrv1:$TITN/initrd.$TVER
+	ssh -o loglevel=error root@pxesrv1 "/bin/cp -f $TITN/initrd.$TVER $TITN/$TVER/initrd"
 
 	# Setup latest symlinks
-	ssh root@pxesrv1 "rm -f /tftpboot/images/txos/latest_nsujir"
-	ssh root@pxesrv1 "rm -f $TREL/latest_nsujir"
-	ssh root@pxesrv1 "/bin/ln -sf nsujir/$TVER /tftpboot/images/txos/latest_nsujir"
-	ssh root@pxesrv1 "/bin/ln -sf $TVER $TREL/latest_nsujir"
+	ssh -o loglevel=error root@pxesrv1 "rm -f /tftpboot/images/txos/latest_nsujir"
+	ssh -o loglevel=error root@pxesrv1 "rm -f $TREL/latest_nsujir"
+	ssh -o loglevel=error root@pxesrv1 "/bin/ln -sf nsujir/$TVER /tftpboot/images/txos/latest_nsujir"
+	ssh -o loglevel=error root@pxesrv1 "/bin/ln -sf $TVER $TREL/latest_nsujir"
 
 	echo "scp $TRPM root@pxesrv1:$TREL/$TVER/"
-	scp $TRPM root@pxesrv1:$TREL/$TVER/
+	scp -o loglevel=error $TRPM root@pxesrv1:$TREL/$TVER/
 
 	if [ -f /tmp/nsujir.menu ]; then
 		OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's/.*vmlinuz.//')
@@ -198,12 +198,12 @@ sc() {
 		/bin/cat /tmp/nsujir.menu.orig >> /tmp/nsujir.menu
 	fi
 
-	scp /tmp/nsujir.menu root@pxesrv1:/tftpboot/pxelinux.cfg/
+	scp -o loglevel=error /tmp/nsujir.menu root@pxesrv1:/tftpboot/pxelinux.cfg/
 
-	echo "scp $TRPM $TVM:txos/"
-	scp $TRPM $TVM:txos/
+	echo "scp -o loglevel=error $TRPM $TVM:txos/"
+	scp -o loglevel=error $TRPM $TVM:txos/
 
-	ssh $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
+	ssh -o loglevel=error $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
 }
 
 FS() {
@@ -270,6 +270,25 @@ UI() {
 	hg revert hyper-v/
 	./antbuild
 	popd > /dev/null
+}
+
+BFP() {
+	diff $TOPDIR/platform/.hg/branch $TOPDIR/fs/.hg/branch
+	[[ $? -ne 0 ]] &&  {
+		echo "Branches don't match"
+		return
+	}
+
+	diff $TOPDIR/platform/.hg/branch $TOPDIR/ui/.hg/branch
+	[[ $? -ne 0 ]] &&  {
+		echo "Branches don't match"
+		return
+	}
+
+	FS
+	[[ $? -ne 0 ]] && return
+
+	B "$@"
 }
 
 BT() {

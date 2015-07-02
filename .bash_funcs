@@ -122,7 +122,7 @@ cs() {
 	rm tags
 	rm cscope.*
 
-	find . -name "*.[ch]" | grep -Ev "sound|video|arch.arm|arch.frv|arch.blackfin|arch.cris|arch.microb|arch.powerpc|s390|arch.sh|bluetooth|infiniband|isdn|pcmcia|ceph|btrfs|fs.hfs|fs.hp|fs.jf|fs.ntfs|fs.jbd|fs.min|fs.nil|fs.ocf|fs.xfs|fs.nfs|ubifs|wireless|wimax|chelsio|.fufcache|drivers.media|drivers.input|drivers.atm|drivers.gpu|macintosh|m68k|xtensa|sparc|fs.nls|fs.cifs|squashfs|fs.befs|reiserfs|fs.gfs|fs.dlm|include.media|include.linux.usb|dvb|config.nls|config.media|hisax|usb|config.snd|hid|mellanox|net.ppp|net.hamradio|staging|alpha|avr32|unicore32|mn10300|arch.um|c6x|m32r|hexagon|h8300|parisc|mips|arch.score|openrisc|ia64|arch.tile|adfs|coda|fs.afs|fs.udf|fs.9p|fs.exofs|ncpfs|freevxfs|mfd|linux.input|config.input|mtd|touchscreen|irda|patches|ixgbe-2|ixgbe-3.2|ixgbe-3.3|igb-2|igb-3|mpt2sas-04|mpt2sas-07|scsi.mpt2|netlist-1.4|extdrivers.umx|extdrivers.umem" > cscope.files
+	find . -name "*.[ch]" | grep -Ev "sound|video|arch.arm|arch.frv|arch.blackfin|arch.cris|arch.microb|arch.powerpc|s390|arch.sh|bluetooth|infiniband|isdn|pcmcia|ceph|btrfs|fs.hfs|fs.hp|fs.jf|fs.ntfs|fs.jbd|fs.min|fs.nil|fs.ocf|fs.xfs|fs.nfs|ubifs|wireless|wimax|chelsio|.fufcache|drivers.media|drivers.input|drivers.atm|drivers.gpu|macintosh|m68k|xtensa|sparc|fs.nls|fs.cifs|squashfs|fs.befs|reiserfs|fs.gfs|fs.dlm|include.media|include.linux.usb|dvb|config.nls|config.media|hisax|usb|config.snd|hid|mellanox|net.ppp|net.hamradio|staging|alpha|avr32|unicore32|mn10300|arch.um|c6x|m32r|hexagon|h8300|parisc|mips|arch.score|openrisc|ia64|arch.tile|adfs|coda|fs.afs|fs.udf|fs.9p|fs.exofs|ncpfs|freevxfs|mfd|linux.input|config.input|mtd|touchscreen|irda|patches|ixgbe-2|ixgbe-3.2|ixgbe-3.3|igb-2|igb-3|mpt2sas-04|mpt2sas-07|scsi.mpt2|netlist-1.4|extdrivers.umx|extdrivers.umem|extdrivers.pmc" > cscope.files
 	find . -name "*.cpp" >> cscope.files
 
 	/usr/bin/cscope -bv
@@ -339,12 +339,20 @@ isol() {
 	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi -L OPERATOR sol activate
 }
 
+isel() {
+	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi sel list
+}
+
 isold() {
 	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi -L OPERATOR sol deactivate
 }
 
 xsol() {
 	ipmitool -I lanplus -U admin -P admin -H $1-ipmi sol activate
+}
+
+xsel() {
+	ipmitool -I lanplus -U admin -P admin -H $1-ipmi sel list
 }
 
 xsold() {
@@ -361,6 +369,10 @@ iu() {
 	fi
 
 	boot_dom=$(/usr/local/tintri/bin/list_disks -i)
+
+	if [[ -z $boot_dom ]]; then
+		boot_dom=/dev/sda
+	fi
 
 	mount ${boot_dom}1 $MNT
 
@@ -562,6 +574,7 @@ cvm() {
 	tsh $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
 	tsh $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
 	tsh $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
+	tsh $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
 	tsh $1 ln -sf /root/nsujir/.profile /root/
 	tsh $1 ln -sf /root/nsujir/.bashrc /root/
 }
@@ -744,6 +757,10 @@ sai() {
 	fi
 
 	sudo $pkgmgr install "$@"
+}
+
+syi() {
+	sai "$@"
 }
 
 sar() {

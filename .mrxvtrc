@@ -186,7 +186,7 @@ Mrxvt.macro.Ctrl+Shift+v:		Paste
 Mrxvt.macro.Shift+Delete:		SetTitle
 
 # Clear scroll back and execute command
-#Mrxvt.macro.Primary+Shift+Return:	Esc \ec
+Mrxvt.macro.Primary+Shift+Return:	Esc \ec
 Mrxvt.macro.Primary+Add+Shift+Return:	Str ^M
 
 #

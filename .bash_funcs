@@ -775,3 +775,12 @@ sar() {
 	sudo $pkgmgr remove "$@"
 }
 
+bmclog() {
+	local target=$1
+
+	# Remove -ipmi if exists
+	target=${target%-ipmi}
+
+	echo "Saving to $target-bmc.log"
+	sshpass -p superuser ssh -o StrictHostKeyChecking=no sysadmin@$target-ipmi "BMC_CollectLogs.sh" $target-bmc.log
+}

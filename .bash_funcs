@@ -570,6 +570,7 @@ drpms() {
 
 cvm() {
 	tcp $1 ~/.bf
+	tsh $1 rm -rf /root/nsujir
 	tcp $1:nsujir ~/tintri/vmstore-custom/
 	tsh $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
 	tsh $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
@@ -761,6 +762,18 @@ sai() {
 
 syi() {
 	sai "$@"
+}
+
+syu() {
+	local pkgmgr=apt-get
+
+	if [[ -e /usr/bin/dnf ]]; then
+		pkgmgr=dnf
+	elif [[ -e /usr/bin/yum ]]; then
+		pkgmgr=yum
+	fi
+
+	sudo $pkgmgr update "$@"
 }
 
 sar() {

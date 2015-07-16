@@ -1,8 +1,9 @@
 #!/bin/bash
 IPADDR=$1
+GW=$2
 
-if [[ -z $IPADDR ]]; then
-	echo "Need ipmi ip"
+if [[ -z $IPADDR || -z $GW ]]; then
+	echo "Need ipmi ip and gw"
 	exit 1
 fi
 
@@ -11,7 +12,7 @@ syscfg /bcs "MuffinMan" "Console Redirection" 1
 ipmitool lan set 1 ipsrc static
 ipmitool lan set 1 ipaddr $IPADDR
 ipmitool lan set 1 netmask 255.255.0.0
-ipmitool lan set 1 defgw ipaddr 10.40.0.1
+ipmitool lan set 1 defgw ipaddr $GW
 ipmitool lan set 1 vlan id off
 ipmitool lan set 1 access on
 # This next one seems to fail if user is already named admin.

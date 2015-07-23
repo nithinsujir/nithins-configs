@@ -1,4 +1,7 @@
 #!/bin/bash
+CPUS=$(grep processor /proc/cpuinfo | wc -l)
+THREADS=$((CPUS*2))
+
 
 esn() {
 	sudo vim /etc/sysconfig/network-scripts/ifcfg-$1
@@ -210,7 +213,7 @@ FS() {
 	pushd $TOPDIR/fs > /dev/null
 	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
 	cd $TOPDIR/bld_rs
-	scons -j16
+	scons -j $THREADS
 	popd > /dev/null
 }
 
@@ -218,7 +221,7 @@ BE() {
 	# Build extpkgs
 	pushd $TOPDIR/platform/distro/extpkgs/ > /dev/null
 
-	./build.sh -e build -j 16
+	./build.sh -e build -j $THREADS
 	[[ $? -ne 0 ]] && return
 	./build.sh -e install
 	[[ $? -ne 0 ]] && return
@@ -230,7 +233,7 @@ BP() {
 	pushd $TOPDIR/platform/os > /dev/null
 
 	# Build os
-	./build.sh build -j 16
+	./build.sh build -j $THREADS
 	[[ $? -ne 0 ]] && return
 
 	./build.sh install
@@ -537,7 +540,7 @@ hge() {
 
 btools() {
 	pushd $TOPDIR/platform/os/tools > /dev/null
-	./build.sh build -j 8
+	./build.sh build -j $THREADS
 	popd > /dev/null
 }
 
@@ -646,32 +649,6 @@ pxed() {
 	/auto/e2e/bin/rspxeinstall.py pxeinstall --branch default $target
 }
 
-sshnvm() {
-	tgtdir=$1
-	shift
-	func=$1
-	shift
-
-	# ssh -t -t will force a pseudo terminal even if stdin is not terminal
-	# (for color output)
-	typeset -f | ssh -t -t nsujir@nsujir-vm "$(cat);cd $tgtdir;TOPDIR=$TOPDIR $func $@"
-}
-
-runfunc() {
-	local func=$1
-	shift
-
-	local args="$@"
-	local hname=$(/bin/hostname -s)
-
-	if [[ $hname == "nsujir-vm" ]]; then
-		$func "$args"
-		return
-	fi
-
-	sshnvm $PWD $func "$args"
-}
-
 hgc0() {
 	hg commit -m "bug 0"
 }
@@ -684,22 +661,13 @@ hgc() {
 	hg commit "$@"
 }
 
-hh() {
-	local hname=$(/bin/hostname -s)
-	if [[ $hname == "nsujir-vm" ]]; then
-		hg $@
-	else
-		ssh -X -t nsujir@nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg $@"
-	fi
-}
-
 bb() {
-	./build.sh build -j 16 "$@"
+	./build.sh build -j $THREADS "$@"
 }
 
 be() {
 	pushd $TOPDIR/platform/os/extdrivers > /dev/null
-	./build.sh build -j 16
+	./build.sh build -j $THREADS
 	popd > /dev/null
 }
 
@@ -715,7 +683,7 @@ bi() {
 
 bt() {
 	pushd $TOPDIR/platform/os/tools > /dev/null
-	./build.sh build -j 16
+	./build.sh build -j $THREADS
 	popd > /dev/null
 }
 
@@ -726,15 +694,8 @@ btc() {
 }
 
 hgd() {
-	local hname=$(/bin/hostname -s)
-	if [[ $hname == "nsujir-vm" ]]; then
-		hg diff
-		return
-	fi
+	hg diff
 
-	ssh nsujir-vm "cd `pwd`;TOPDIR=$TOPDIR hg status" > /tmp/hdinc.txt
-	sed -i 's/^. /path:/' /tmp/hdinc.txt
-	hg diff -I "listfile:/tmp/hdinc.txt"
 }
 
 mt() {

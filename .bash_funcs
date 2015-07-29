@@ -210,11 +210,27 @@ sc() {
 }
 
 FS() {
+	local cid
+	local rc=0
+
 	pushd $TOPDIR/fs > /dev/null
-	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
-	cd $TOPDIR/bld_rs
-	scons -j $THREADS
+
+	# Check if we need to build. hg identify adds a '+' if there are
+	# uncommitted changes so we will always rebuild in that case
+	cid=$(hg identify --num)
+	ls $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/filesystem_core*$cid*.rpm
+	if [[ $? -ne 0 ]]; then
+		scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
+		cd $TOPDIR/bld_rs
+		scons -j $THREADS
+		rc=$?
+	else
+		echo "FS already built"
+	fi
+
 	popd > /dev/null
+
+	return $rc
 }
 
 BE() {
@@ -249,7 +265,7 @@ RMS() {
 
 MK() {
 	RMS
-	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
+	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools -s "$@"
 }
 
 B() {
@@ -264,15 +280,30 @@ B() {
 }
 
 UI() {
+	local cid
+	local rc=0
+
 	pushd $TOPDIR/ui > /dev/null
 
-	./antbuild clean
-	./antbuild smis-clean
-	rm -rf hyper-v/smis/pegasus_tmp
-	hg purge hyper-v/
-	hg revert hyper-v/
-	./antbuild
+	# Check if we need to build. hg identify adds a '+' if there are
+	# uncommitted changes so we will always rebuild in that case
+	cid=$(hg identify --num)
+	ls $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/ui_core*$cid*.rpm
+	if [[ $? -ne 0 ]]; then
+		./antbuild clean
+		./antbuild smis-clean
+		rm -rf hyper-v/smis/pegasus_tmp
+		hg purge hyper-v/
+		hg revert hyper-v/
+		./antbuild
+		rc=$?
+	else
+		echo "UI already built"
+	fi
+
 	popd > /dev/null
+
+	return $rc
 }
 
 BFP() {
@@ -294,6 +325,11 @@ BFP() {
 	B "$@"
 }
 
+BPE() {
+	BP
+	BE
+}
+
 BT() {
 	diff $TOPDIR/platform/.hg/branch $TOPDIR/fs/.hg/branch
 	[[ $? -ne 0 ]] &&  {
@@ -307,19 +343,22 @@ BT() {
 		return
 	}
 
-	FS
-	[[ $? -ne 0 ]] && return
+	BPE &
+	bpid=$!
+
+	FS &
+	fpid=$!
 
 	UI
 	[[ $? -ne 0 ]] && return
 
-	#pushd $TOPDIR/platform/os > /dev/null
-	#./build.sh clean
-	#popd > /dev/null
-	#pushd $TOPDIR/platform/distro/extpkgs > /dev/null
-	#./build.sh -e clean
-	#popd > /dev/null
-	B "$@"
+	wait $bpid
+	[[ $? -ne 0 ]] && return
+
+	wait $fpid
+	[[ $? -ne 0 ]] && return
+
+	MK "$@"
 }
 
 TC() {
@@ -531,7 +570,7 @@ ff() {
 hge() {
 	rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
 	rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
-	dest=/data/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
+	dest=$HOME/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
 	mkdir -p $dest
 
 	hg export -r $rev_start:$rev_end -o "$dest/%n-%m.patch"
@@ -662,7 +701,9 @@ hgc() {
 }
 
 bb() {
+	pushd $TOPDIR/platform/os > /dev/null
 	./build.sh build -j $THREADS "$@"
+	popd > /dev/null
 }
 
 be() {
@@ -747,6 +788,10 @@ sar() {
 	fi
 
 	sudo $pkgmgr remove "$@"
+}
+
+syr() {
+	sar "$@"
 }
 
 bmclog() {

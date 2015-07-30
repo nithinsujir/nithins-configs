@@ -83,5 +83,3 @@ umount /sysroot
 
 sync
 
-echo "TODO: check and wait for md resync"
-

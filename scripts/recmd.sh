@@ -8,14 +8,12 @@ if [[ -b /dev/md0 ]]; then
 	mdadm --stop /dev/md0
 fi
 
+set +e
 HddMdPart=5
 for d in $(list_disks -c $ctrlid); do
 	mdadm --zero-superblock ${d}${HddMdPart}
 done
-
-[[ -e /proc/sys/dev/raid/disable_autospare ]] && {
-	echo 0 >  /proc/sys/dev/raid/disable_autospare ;
-}
+set -e
 
 create_md
 partition_md

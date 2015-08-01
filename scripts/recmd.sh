@@ -31,7 +31,8 @@ mduuid=${tokens[2]}
 for d in $(list_disks -c $ctrlid); do
 	disksig -w -p -u $mduuid -c $ctrlid $d
 done
-disksig -w -p -u $mduuid -c $ctrlid /dev/sda
+dom=$(list_disks -i)
+disksig -w -p -u $mduuid -c $ctrlid $dom
 
 MdDev=md0
 partno=p1

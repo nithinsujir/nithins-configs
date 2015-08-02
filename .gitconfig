@@ -8,4 +8,4 @@
 [push]
 	default = current
 [credential]
-	helper = cache --timeout=9999999
+	helper = cache --timeout=999999

@@ -518,6 +518,12 @@ ff() {
 	if [[ $repo == "os" ]] ; then
 		dirs=(
 			#extdrivers/lsi/mpt2sas-10.00.00.00/mpt2sas
+			../distro/fs_overlay
+			../distro/ui_overlay
+			../distro/sys_overlay
+			../distro/initrd_overlay
+			../distro/tools
+			../distro/spec
 			extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas
 			extdrivers/intel/enet/ixgbe-3.11.33/src
 			extdrivers/nvx
@@ -530,12 +536,6 @@ ff() {
 			tools/shared
 			scripts/tools
 			scripts/common
-			../distro/fs_overlay
-			../distro/ui_overlay
-			../distro/sys_overlay
-			../distro/initrd_overlay
-			../distro/tools
-			../distro/spec
 
 		)
 	elif [[ $repo == "fs" ]] ; then

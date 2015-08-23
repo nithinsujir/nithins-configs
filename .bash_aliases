@@ -228,6 +228,7 @@ alias ix='cd $TOPDIR/platform/os/extdrivers/intel/enet/ixgbe-3.11.33/src'
 alias os='cd $TOPDIR/platform/os'
 alias fs='cd $TOPDIR/fs'
 alias ui='cd $TOPDIR/ui'
+alias oi='cd $TOPDIR/oneui'
 
 alias MD='mount /data; mount /data2; mount /data3'
 alias UD='umount /data; umount /data2; umount /data3'

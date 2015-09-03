@@ -6,6 +6,7 @@ alias ag='alias | grep'
 alias am='automake'
 alias app='sudo aptitude purge ~c'
 alias bdr='DEB_BUILD_OPTIONS='parallel=8' fakeroot debian/rules binary'
+alias bun='cd /net/support-nas/mnt/zfs2tb/bundles/'
 alias c="clear"
 alias cho='sudo chown -R nsujir'
 alias ckp='echo "Signed-off-by: Nithin Sujir" > /tmp/gdckpatch && git diff >> /tmp/gdckpatch && git diff --cached >> /tmp/gdckpatch && ./scripts/checkpatch.pl /tmp/gdckpatch'
@@ -214,6 +215,7 @@ alias uvm='ssh -X nsujir-ubuntu14'
 
 alias rsv='rsync -av --exclude="*.swp" $HOME/nithins-configs nsujir-vm:'
 alias upgl='cd; /auto/e2e/bin/UpgradeTools.py install --rpmpath `readlink latest` '
+alias upglu='cd; /auto/e2e/bin/UpgradeTools.py upgrade --rpmpath `readlink latest` '
 
 # Tintri Build
 alias ws='export TOPDIR=/data/workspaces/build0; cd $TOPDIR/platform/os'

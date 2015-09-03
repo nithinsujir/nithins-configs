@@ -25,7 +25,7 @@ log "Name" "Model" "md" "idom" "ddom"
 
 print_tgts() {
 	for dn in m h; do
-		for ((i=1; i<=15; i++)); do
+		for ((i=1; i<=22; i++)); do
 			for cont in a b; do
 				echo taf${dn}${i}${cont}
 			done
@@ -49,8 +49,13 @@ for tgt in ${tgts[@]}; do
 	fi
 
 	tsa $tgt
-	$SCP rootfscheck.sh root@$tgt:
-	$SSH root@$tgt /root/rootfscheck.sh >> $LOG
+	rd=($($SSH root@$tgt "/usr/local/tintri/bin/list_disks -R"))
+	echo ${rd[@]}
+
+	for d in ${rd[@]}; do
+		$SSH root@$tgt "/usr/local/tintri/bin/disksig -r $d"
+	done
+
 	#log  $tgt $model $md $idom $ddom
 done
 

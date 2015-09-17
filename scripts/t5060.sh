@@ -20,7 +20,7 @@ if [[ ! -z $1 ]]; then
 	tgts=($@)
 fi
 
-tgts=(tafm6)
+tgts=(tafm7)
 for tgt in ${tgts[@]}; do
 	echo "------------- $tgt ---------------" >> $LOG
 

@@ -6,6 +6,8 @@ alias ag='alias | grep'
 alias am='automake'
 alias app='sudo aptitude purge ~c'
 alias bdr='DEB_BUILD_OPTIONS='parallel=8' fakeroot debian/rules binary'
+alias bp='time B -e fs -e ui -e util'
+alias bt='time BT'
 alias bun='cd /net/support-nas/mnt/zfs2tb/bundles/'
 alias c="clear"
 alias cho='sudo chown -R nsujir'

@@ -681,6 +681,12 @@ upg() {
 	/auto/e2e/bin/UpgradeTools.py install --rpmpath $txos $target
 }
 
+# Upgrade to latest <branch>
+upgb() {
+	local branch=$1 target=$2
+	/auto/e2e/bin/UpgradeTools.py install --branch $branch $target
+}
+
 # Upgrade to latest default
 upgd() {
 	local target=$1
@@ -716,9 +722,13 @@ bb() {
 }
 
 be() {
+	local rc
 	pushd $TOPDIR/platform/os/extdrivers > /dev/null
 	./build.sh build -j $THREADS
+	rc=$?
 	popd > /dev/null
+
+	return $rc
 }
 
 bec() {

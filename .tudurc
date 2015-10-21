@@ -110,7 +110,7 @@ row = (info)
 # or a color defined like: (r, g, b)
 # where 'r', 'g' and 'b' are numbers from 0 to 1000.
 color = black, transparent # Default colors
-selected = blue, yellow
+selected = black, cyan
 warn = yellow, red
 pipe = white, blue
 help = white, blue

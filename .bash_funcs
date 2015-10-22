@@ -80,7 +80,7 @@ hgp() {
 	# If branch not passed in use current branch
 	BR=${1:-$( hg branch )}
 
-	for repo in platform fs ui
+	for repo in platform fs ui oneui
 	do
 		pushd $TOPDIR/$repo > /dev/null
 		hg up $BR
@@ -125,7 +125,7 @@ cs() {
 	rm tags
 	rm cscope.*
 
-	find . -name "*.[ch]" | grep -Ev "sound|video|arch.arm|arch.frv|arch.blackfin|arch.cris|arch.microb|arch.powerpc|s390|arch.sh|bluetooth|infiniband|isdn|pcmcia|ceph|btrfs|fs.hfs|fs.hp|fs.jf|fs.ntfs|fs.jbd|fs.min|fs.nil|fs.ocf|fs.xfs|fs.nfs|ubifs|wireless|wimax|chelsio|.fufcache|drivers.media|drivers.input|drivers.atm|drivers.gpu|macintosh|m68k|xtensa|sparc|fs.nls|fs.cifs|squashfs|fs.befs|reiserfs|fs.gfs|fs.dlm|include.media|include.linux.usb|dvb|config.nls|config.media|hisax|usb|config.snd|hid|mellanox|net.ppp|net.hamradio|staging|alpha|avr32|unicore32|mn10300|arch.um|c6x|m32r|hexagon|h8300|parisc|mips|arch.score|openrisc|ia64|arch.tile|adfs|coda|fs.afs|fs.udf|fs.9p|fs.exofs|ncpfs|freevxfs|mfd|linux.input|config.input|mtd|touchscreen|irda|patches|ixgbe-2|ixgbe-3.2|ixgbe-3.3|igb-2|igb-3|mpt2sas-04|mpt2sas-07|scsi.mpt2|netlist-1.4|extdrivers.umx|extdrivers.umem|extdrivers.pmc" > cscope.files
+	find . -name "*.[ch]" | grep -Ev "sound|video|arch.arm|arch.frv|arch.blackfin|arch.cris|arch.microb|arch.powerpc|s390|arch.sh|bluetooth|infiniband|isdn|pcmcia|ceph|btrfs|fs.hfs|fs.hp|fs.jf|fs.ntfs|fs.jbd|fs.min|fs.nil|fs.ocf|fs.xfs|fs.nfs|ubifs|wireless|wimax|chelsio|.fufcache|drivers.media|drivers.input|drivers.atm|drivers.gpu|macintosh|m68k|xtensa|sparc|fs.nls|fs.cifs|squashfs|fs.befs|reiserfs|fs.gfs|fs.dlm|include.media|include.linux.usb|dvb|config.nls|config.media|hisax|usb|config.snd|hid|mellanox|net.ppp|net.hamradio|staging|alpha|avr32|unicore32|mn10300|arch.um|c6x|m32r|hexagon|h8300|parisc|mips|arch.score|openrisc|ia64|arch.tile|adfs|coda|fs.afs|fs.udf|fs.9p|fs.exofs|ncpfs|freevxfs|mfd|linux.input|config.input|mtd|touchscreen|irda|patches|ixgbe-2|ixgbe-3.2|ixgbe-3.3|igb-2|igb-3|mpt2sas-04|mpt2sas-07|scsi.mpt2|netlist-1.4|extdrivers.umx|extdrivers.umem" > cscope.files
 	find . -name "*.cpp" >> cscope.files
 
 	/usr/bin/cscope -bv
@@ -210,11 +210,27 @@ sc() {
 }
 
 FS() {
+	local cid
+	local rc=0
+
 	pushd $TOPDIR/fs > /dev/null
-	scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
-	cd $TOPDIR/bld_rs
-	scons -j $THREADS
+
+	# Check if we need to build. hg identify adds a '+' if there are
+	# uncommitted changes so we will always rebuild in that case
+	cid=$(hg identify --num)
+	ls $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/filesystem_core*$cid*.rpm
+	if [[ $? -ne 0 ]]; then
+		scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
+		cd $TOPDIR/bld_rs
+		scons -j $THREADS
+		rc=$?
+	else
+		echo "FS already built"
+	fi
+
 	popd > /dev/null
+
+	return $rc
 }
 
 BE() {
@@ -249,7 +265,7 @@ RMS() {
 
 MK() {
 	RMS
-	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools "$@"
+	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools -s -E vmlinux -E realstore -E PlatCmd -E HAMon -E nvx -E pmc -E PlatMon "$@"
 }
 
 B() {
@@ -264,15 +280,30 @@ B() {
 }
 
 UI() {
+	local cid
+	local rc=0
+
 	pushd $TOPDIR/ui > /dev/null
 
-	./antbuild clean
-	./antbuild smis-clean
-	rm -rf hyper-v/smis/pegasus_tmp
-	hg purge hyper-v/
-	hg revert hyper-v/
-	./antbuild
+	# Check if we need to build. hg identify adds a '+' if there are
+	# uncommitted changes so we will always rebuild in that case
+	cid=$(hg identify --num)
+	ls $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/ui_core*$cid*.rpm
+	if [[ $? -ne 0 ]]; then
+		./antbuild clean
+		./antbuild smis-clean
+		rm -rf hyper-v/smis/pegasus_tmp
+		hg purge hyper-v/
+		hg revert hyper-v/
+		./antbuild
+		rc=$?
+	else
+		echo "UI already built"
+	fi
+
 	popd > /dev/null
+
+	return $rc
 }
 
 BFP() {
@@ -294,6 +325,11 @@ BFP() {
 	B "$@"
 }
 
+BPE() {
+	BP
+	BE
+}
+
 BT() {
 	diff $TOPDIR/platform/.hg/branch $TOPDIR/fs/.hg/branch
 	[[ $? -ne 0 ]] &&  {
@@ -307,19 +343,22 @@ BT() {
 		return
 	}
 
-	FS
-	[[ $? -ne 0 ]] && return
+	BPE &
+	bpid=$!
+
+	FS &
+	fpid=$!
 
 	UI
 	[[ $? -ne 0 ]] && return
 
-	#pushd $TOPDIR/platform/os > /dev/null
-	#./build.sh clean
-	#popd > /dev/null
-	#pushd $TOPDIR/platform/distro/extpkgs > /dev/null
-	#./build.sh -e clean
-	#popd > /dev/null
-	B "$@"
+	wait $bpid
+	[[ $? -ne 0 ]] && return
+
+	wait $fpid
+	[[ $? -ne 0 ]] && return
+
+	MK "$@"
 }
 
 TC() {
@@ -479,6 +518,12 @@ ff() {
 	if [[ $repo == "os" ]] ; then
 		dirs=(
 			#extdrivers/lsi/mpt2sas-10.00.00.00/mpt2sas
+			../distro/fs_overlay
+			../distro/ui_overlay
+			../distro/sys_overlay
+			../distro/initrd_overlay
+			../distro/tools
+			../distro/spec
 			extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas
 			extdrivers/intel/enet/ixgbe-3.11.33/src
 			extdrivers/nvx
@@ -491,12 +536,6 @@ ff() {
 			tools/shared
 			scripts/tools
 			scripts/common
-			../distro/fs_overlay
-			../distro/ui_overlay
-			../distro/sys_overlay
-			../distro/initrd_overlay
-			../distro/tools
-			../distro/spec
 
 		)
 	elif [[ $repo == "fs" ]] ; then
@@ -531,7 +570,7 @@ ff() {
 hge() {
 	rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
 	rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
-	dest=/data/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
+	dest=$HOME/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
 	mkdir -p $dest
 
 	hg export -r $rev_start:$rev_end -o "$dest/%n-%m.patch"
@@ -550,7 +589,7 @@ tsh() {
 	tsa $target
 
 	shift
-	ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$target $@
+	/usr/bin/ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error root@$target $@
 }
 
 tcp() {
@@ -562,7 +601,7 @@ tcp() {
 		target=$target:
 	fi
 	shift
-	scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$@" root@$target
+	/usr/bin/scp -r -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error "$@" root@$target
 }
 
 drpms() {
@@ -581,6 +620,15 @@ cvm() {
 	tsh $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
 	tsh $1 ln -sf /root/nsujir/.profile /root/
 	tsh $1 ln -sf /root/nsujir/.bashrc /root/
+}
+
+# isolsetup
+isols() {
+	target=$1
+	ip=$(ping -c 1 -W 1 $target-ipmi | grep $target | grep PING | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
+	mask=$(ping -c 1 -W 1 $target-ipmi | grep $target | grep PING | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.')0.1
+
+	tsh $1 "/root/nsujir/isolsetup.sh $ip $mask"
 }
 
 zsda() {
@@ -633,6 +681,12 @@ upg() {
 	/auto/e2e/bin/UpgradeTools.py install --rpmpath $txos $target
 }
 
+# Upgrade to latest <branch>
+upgb() {
+	local branch=$1 target=$2
+	/auto/e2e/bin/UpgradeTools.py install --branch $branch $target
+}
+
 # Upgrade to latest default
 upgd() {
 	local target=$1
@@ -662,13 +716,19 @@ hgc() {
 }
 
 bb() {
+	pushd $TOPDIR/platform/os > /dev/null
 	./build.sh build -j $THREADS "$@"
+	popd > /dev/null
 }
 
 be() {
+	local rc
 	pushd $TOPDIR/platform/os/extdrivers > /dev/null
 	./build.sh build -j $THREADS
+	rc=$?
 	popd > /dev/null
+
+	return $rc
 }
 
 bec() {
@@ -747,6 +807,10 @@ sar() {
 	fi
 
 	sudo $pkgmgr remove "$@"
+}
+
+syr() {
+	sar "$@"
 }
 
 bmclog() {

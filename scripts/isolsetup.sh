@@ -7,7 +7,7 @@ if [[ -z $IPADDR || -z $GW ]]; then
 	exit 1
 fi
 
-syscfg /bcs "MuffinMan" "Console Redirection" 1
+/usr/local/tintri/bin/syscfg /bcs "MuffinMan" "Console Redirection" 1
 
 ipmitool lan set 1 ipsrc static
 ipmitool lan set 1 ipaddr $IPADDR

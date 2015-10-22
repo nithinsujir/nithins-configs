@@ -47,7 +47,7 @@ orig=`mktemp`
 tempfiles="$patch $orig"
 if [ -z $files ] || ! [ -f $files ] ; then
     # No file given, so loop over all files svn st says have changed
-    files=$(git status 2> /dev/null | grep -e "modified:" | cut -c 15-)
+    files=$(git status 2> /dev/null | grep -e "modified:" | cut -c 14-)
     for f in $files; do
       if ! [ -f $f ]; then break; fi
       filename=`basename $f`

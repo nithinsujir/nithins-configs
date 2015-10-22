@@ -43,4 +43,6 @@ cscope.files
 *.diff
 .gvimrc_
 rmins.sh
-
+*.class
+*.zip
+*.drjava

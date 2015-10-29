@@ -275,18 +275,18 @@ autocmd InsertEnter *.c,*.h 3match TrailSpace /\s\+\%#\@<!$/
 autocmd InsertLeave *.c,*.h 3match TrailSpace /\s\+$/
 autocmd BufWinLeave call clearmatches()
 
-autocmd BufWinEnter,BufCreate,BufRead *.cpp set softtabstop=4
-autocmd BufWinEnter,BufCreate,BufRead *.cpp set tabstop=4
-autocmd BufWinEnter,BufCreate,BufRead *.cpp set shiftwidth=4
-autocmd BufWinEnter,BufCreate,BufRead *.cpp set expandtab
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set softtabstop=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set tabstop=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set shiftwidth=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set expandtab
 
-autocmd BufWinLeave *.cpp set softtabstop=8
-autocmd BufWinLeave *.cpp set tabstop=8
-autocmd BufWinLeave *.cpp set shiftwidth=8
-autocmd BufWinLeave *.cpp set noexpandtab
+autocmd BufWinLeave *.cpp,*.java set softtabstop=8
+autocmd BufWinLeave *.cpp,*.java set tabstop=8
+autocmd BufWinLeave *.cpp,*.java set shiftwidth=8
+autocmd BufWinLeave *.cpp,*.java set noexpandtab
 
 if version >= 703
-	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h set colorcolumn=81
+	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cpp,*.java set colorcolumn=81
 endif
 
 autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%81v.*/

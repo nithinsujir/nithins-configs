@@ -1,6 +1,8 @@
 #!/bin/bash
 CPUS=$(grep processor /proc/cpuinfo | wc -l)
 THREADS=$((CPUS*2))
+SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
+SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 
 
 esn() {
@@ -265,7 +267,7 @@ RMS() {
 
 MK() {
 	RMS
-	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools -s -E vmlinux -E realstore -E PlatCmd -E HAMon -E nvx -E pmc -E PlatMon "$@"
+	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel  -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools -s -E vmlinux -E realstore -E PlatCmd -E HAMon -E nvx -E pmc -E PlatMon -E list_disks -E boot_fsck "$@"
 }
 
 B() {
@@ -691,6 +693,51 @@ upgb() {
 upgd() {
 	local target=$1
 	/auto/e2e/bin/UpgradeTools.py install --branch default $target
+}
+
+upgt() {
+	target=$1
+	rpm=$(basename $2)
+
+	/bin/ping -c 1 -W 3 ${target}a 2>&1 > /dev/null
+	if [[ $? -ne 0 ]]; then
+		echo "${target}a not accessible"
+		exit 1
+	fi
+
+	/bin/ping -c 1 -W 3 ${target}b 2>&1 > /dev/null
+	if [[ $? -ne 0 ]]; then
+		echo "${target}a not accessible"
+		exit 1
+	fi
+
+	echo "scp'ing $rpm"
+	$SCP $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/$rpm root@${target}a:/var/releases/upload
+	if [[ $? -ne 0 ]]; then
+		echo "scp failed to controller A"
+		return 1
+	fi
+
+	$SCP $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/$rpm root@${target}b:/var/releases/upload
+	if [[ $? -ne 0 ]]; then
+		echo "scp failed to controller B"
+		return 1
+	fi
+
+	echo "Starting upgrade_txos"
+	$SSH root@${target}a "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
+	if [[ $? -ne 124 ]]; then
+		echo "Upgrade failed on controller A"
+	else
+		$SSH root@${target}a "reboot"
+	fi
+
+	$SSH root@${target}b "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
+	if [[ $? -ne 124 ]]; then
+		echo "Upgrade failed on controller B"
+	else
+		$SSH root@${target}b "reboot"
+	fi
 }
 
 updb() {

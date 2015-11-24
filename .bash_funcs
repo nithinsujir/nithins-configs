@@ -702,13 +702,13 @@ upgt() {
 	/bin/ping -c 1 -W 3 ${target}a 2>&1 > /dev/null
 	if [[ $? -ne 0 ]]; then
 		echo "${target}a not accessible"
-		exit 1
+		return 1
 	fi
 
 	/bin/ping -c 1 -W 3 ${target}b 2>&1 > /dev/null
 	if [[ $? -ne 0 ]]; then
 		echo "${target}a not accessible"
-		exit 1
+		return 1
 	fi
 
 	echo "scp'ing $rpm"
@@ -724,7 +724,13 @@ upgt() {
 		return 1
 	fi
 
-	echo "Starting upgrade_txos"
+	echo "Stopping services"
+	$SSH root@${target}a "/sbin/service postgresql-perf stop"
+	$SSH root@${target}a "/sbin/service txos stop"
+	$SSH root@${target}b "/sbin/service postgresql-perf stop"
+	$SSH root@${target}b "/sbin/service txos stop"
+
+	echo "Starting upgrade_txos on A"
 	$SSH root@${target}a "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
 	if [[ $? -ne 124 ]]; then
 		echo "Upgrade failed on controller A"
@@ -732,6 +738,7 @@ upgt() {
 		$SSH root@${target}a "reboot"
 	fi
 
+	echo "Starting upgrade_txos on B"
 	$SSH root@${target}b "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
 	if [[ $? -ne 124 ]]; then
 		echo "Upgrade failed on controller B"

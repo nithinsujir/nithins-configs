@@ -1,0 +1,79 @@
+reel
+
+# unpack/pack initrd
+mkdir tmp
+cd tmp
+gunzip -c ../initrd | cpio -iv
+find . | cpio -H newc -o | gzip > ../initrd
+
+# debugfs block trace
+
+# iozone
+iozone -aOczR -f /mnt/ttha48/testfile -g 5g  -+z > iozone-single.out
+
+# ssd endurance
+root@tin1
+/var/intel
+
+# lmbench
+
+$ scp –r ~amar/Tools/lmbench-3.0-a9
+$ cd scripts
+$ ./config-run  <— disable fs, networking related options (we need only memory latency and throughput)
+
+Start lmbench test by typing
+$ ./results 
+
+Print pretty results by running
+$ ./getsummary ../results/x86*****/<dns-name.tintri.com>
+
+
+/auto/e2e/bin/assimilate.py --ignore_owner --ignore_quarantined <hostname>
+
+# Clear Reservations
+{{{sh
+#!/bin/bash
+sdev=$1
+sg_persist -s $sdev
+sg_persist -o -I -S badbad -Z $sdev
+sg_persist -s $sdev
+sg_persist -o -C -K badbad $sdev
+sg_persist -s $sdev
+}}} 
+
+# dperf
+dperf location: /u/elee/share/dperf
+./dperf --range 1g --work w-16k-16 /mnt/out
+
+# A & B IPs
+{{{sh
+vi /etc/sysconfig/tintri/local
+
+NETCONF_STATIC_IPADDRS[ADMIN_0_0]=10.40.204.12
+NETCONF_STATIC_NETMASKS[ADMIN_0_0]=255.255.0.0
+NETCONF_STATIC_GATEWAYS[ADMIN_0_0]=10.40.0.1
+
+make_network-scripts
+service iptables restart
+service network restart
+}}}
+
+# ntp not syncing
+
+Time Errors
+http://www.ntp.org/ntpfaq/NTP-s-trbl-general.htm#AEN5212
+
+http://www.ntp.org/ntpfaq/NTP-s-trouble.htm#Q-TRB-MON-STATFIL
+
+Fixing ntp refusing to sync
+http://log.or.cz/?p=80
+
+RH Timestamping
+https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_MRG/2/html/Realtime_Reference_Guide/chap-Realtime_Reference_Guide-Timestamping.html
+
+Tuning with adjtimex as an alternative to using ntpd
+http://www.ep.ph.bham.ac.uk/general/support/adjtimex.html
+
+
+http://support.ntp.org/bin/view/Support/KnownOsIssues#Section_9.2.4.2.7.
+

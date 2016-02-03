@@ -594,6 +594,11 @@ tsh() {
 	/usr/bin/ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error root@$target $@
 }
 
+ish() {
+	target=$1-ipmi
+	sshpass  -p superuser ssh -o StrictHostKeyChecking=no sysadmin@$target
+}
+
 tcp() {
 	target=$1
 

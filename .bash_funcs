@@ -173,10 +173,9 @@ sc() {
 	echo "scp $TRPM root@pxesrv1:$TREL/$TVER/"
 	scp -o loglevel=error $TRPM root@pxesrv1:$TREL/$TVER/
 
-	if [ -f /tmp/nsujir.menu ]; then
-		OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's/.*vmlinuz.//')
-		mv /tmp/nsujir.menu /tmp/nsujir.menu.orig
-	fi
+	scp root@pxesrv1:/tftpboot/pxelinux.cfg/nsujir.menu /tmp/
+	OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's/.*vmlinuz.//')
+	mv /tmp/nsujir.menu /tmp/nsujir.menu.orig
 
 	LABEL=$(date +"%b-%d %k:%M")
 
@@ -585,13 +584,20 @@ btools() {
 	popd > /dev/null
 }
 
+_ssh() {
+	target=$1
+	shift
+	/usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error root@$target $@
+
+}
+
 tsh() {
 	target=$1
 
 	tsa $target
 
 	shift
-	/usr/bin/ssh -X -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error root@$target $@
+	_ssh $target $@
 }
 
 ish() {
@@ -620,13 +626,13 @@ drpms() {
 cvm() {
 	tcp $1 ~/.bf
 	tsh $1 rm -rf /root/nsujir
-	tcp $1:nsujir ~/tintri/vmstore-custom/
-	tsh $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
-	tsh $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
-	tsh $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
-	tsh $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
-	tsh $1 ln -sf /root/nsujir/.profile /root/
-	tsh $1 ln -sf /root/nsujir/.bashrc /root/
+	scp -r ~/tintri/vmstore-custom/ root@$1:nsujir
+	_ssh $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
+	_ssh $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
+	_ssh $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
+	_ssh $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
+	_ssh $1 ln -sf /root/nsujir/.profile /root/
+	_ssh $1 ln -sf /root/nsujir/.bashrc /root/
 }
 
 # isolsetup

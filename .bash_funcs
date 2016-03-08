@@ -174,7 +174,7 @@ sc() {
 	scp -o loglevel=error $TRPM root@pxesrv1:$TREL/$TVER/
 
 	scp root@pxesrv1:/tftpboot/pxelinux.cfg/nsujir.menu /tmp/
-	OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's/.*vmlinuz.//')
+	OTVER=$(grep vmlinuz /tmp/nsujir.menu | head -n 1 | sed 's:/vmlinuz::' | sed 's:.*/::')
 	mv /tmp/nsujir.menu /tmp/nsujir.menu.orig
 
 	LABEL=$(date +"%b-%d %k:%M")

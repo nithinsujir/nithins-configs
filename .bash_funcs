@@ -101,6 +101,16 @@ hgp() {
 	done
 }
 
+hgt() {
+	for repo in platform fs ui oneui
+	do
+		pushd $TOPDIR/$repo > /dev/null
+		hg pull
+		hg tupdate
+		popd > /dev/null
+	done
+}
+
 hgbd() {
 	hg bookmark -d $(cur_hg_bookmark)
 }

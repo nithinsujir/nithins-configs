@@ -166,6 +166,9 @@ sc() {
 	ssh -o loglevel=error root@pxesrv1 mkdir -p $TREL/$TVER
 	ssh -o loglevel=error root@pxesrv1 mkdir -p $TITN/$TVER
 
+	echo "scp -o loglevel=error $TRPM $TVM:txos/"
+	scp -o loglevel=error $TRPM $TVM:txos/ &
+
 	echo "scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN"
 	scp -o loglevel=error $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN/vmlinuz.$TVER
 	ssh -o loglevel=error root@pxesrv1 "/bin/cp -f $TITN/vmlinuz.$TVER $TITN/$TVER/vmlinuz"
@@ -214,9 +217,7 @@ sc() {
 
 	scp -o loglevel=error /tmp/nsujir.menu root@pxesrv1:/tftpboot/pxelinux.cfg/
 
-	echo "scp -o loglevel=error $TRPM $TVM:txos/"
-	scp -o loglevel=error $TRPM $TVM:txos/
-
+	wait
 	ssh -o loglevel=error $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
 }
 

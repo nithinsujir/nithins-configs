@@ -105,7 +105,6 @@ hgt() {
 	for repo in platform fs ui oneui
 	do
 		pushd $TOPDIR/$repo > /dev/null
-		hg pull
 		hg tupdate
 		popd > /dev/null
 	done

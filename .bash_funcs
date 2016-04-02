@@ -459,7 +459,7 @@ IU() {
 }
 
 iz() {
-	local MNT=/ird
+	local MNT=/root/ird
 	if [ ! -d $MNT/tmp ]
 	then
 		echo "initrd not exploded"

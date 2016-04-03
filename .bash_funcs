@@ -414,30 +414,28 @@ xsold() {
 
 iu() {
 	local MNT=/root/ird
+	local EXPLODE_DIR=/root/initrd_explode
 	mkdir -p $MNT
-
-	if [ -d $MNT/tmp ]
-	then
-		return
-	fi
+	mkdir -p $EXPLODE_DIR
 
 	boot_dom=$(/usr/local/tintri/bin/list_disks -i)
 
+	# On ttvm, list_disks -i will fail
 	if [[ -z $boot_dom ]]; then
-		boot_dom=$(list_disks -i)
+		boot_dom=/dev/sda
 	fi
 
 	mount ${boot_dom}1 $MNT
 
-	if [ -d $MNT/tmp ]
+	if [ -d $EXPLODE_DIR/tmp ]
 	then
 		return
 	fi
 
-	mkdir -p $MNT/tmp
-	cd $MNT/tmp
+	mkdir -p $EXPLODE_DIR/tmp
+	cd $EXPLODE_DIR/tmp
 	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
-	gunzip -c ../$INITRD | cpio -i
+	gunzip -c $MNT/$INITRD | cpio -i
 	cd -
 }
 
@@ -447,9 +445,10 @@ liu() {
 }
 
 IU() {
+	local EXPLODE_DIR=/root/initrd_explode
 	local MNT=/root/ird
 
-	rm -rf $MNT/tmp
+	rm -rf $EXPLODE_DIR
 
 	if grep -q $MNT /proc/mounts; then
 		umount $MNT
@@ -460,15 +459,18 @@ IU() {
 
 iz() {
 	local MNT=/root/ird
-	if [ ! -d $MNT/tmp ]
+	local EXPLODE_DIR=/root/initrd_explode
+
+	if [ ! -d $EXPLODE_DIR/tmp ]
 	then
 		echo "initrd not exploded"
 		return
 	fi
 
-	cd $MNT/tmp
+	cd $EXPLODE_DIR/tmp
 	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
-	find . | cpio -H newc -o | gzip -1 > ../$INITRD
+	find . | cpio -H newc -o | gzip -1 > $MNT/$INITRD
+	umount $MNT
 	sync
 	cd -
 }

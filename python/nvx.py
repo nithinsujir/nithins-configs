@@ -2,7 +2,7 @@
 import mmap
 import os
 
-NVDIMM_DEV = '/dev/umema1'
+NVDIMM_DEV = '/dev/agigaram1'
 NVDIMM_SIZE = 1024 * 1024 * 1024
 
 PATTERN1 = '1'
@@ -32,4 +32,5 @@ write_pattern(pat1)
 write_pattern(pat2)
 os.system('ipmitool power cycle')
 write_pattern(pat3)
+
 

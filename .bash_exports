@@ -9,6 +9,7 @@ export tin=/tftpboot/images/txos/nsujir
 export tit=/tftpboot/images/txos/
 export naeb=/net/auto-distrobld-archive/exports/build/
 export dtx=/net/auto-distrobld-archive/exports/savedrpms/default/txos/
+export agd=extdrivers/agiga/madura-1.0/driver/
 
 export PATH=.:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
 #export P4PORT=pf-irva-ecs.broadcom.com:1666

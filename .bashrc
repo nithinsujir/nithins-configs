@@ -136,3 +136,7 @@ if [ -f ~/.bash_local ]; then
 fi
 
 set -o vi
+stty stop undef
+stty start undef
+stty -ixon
+

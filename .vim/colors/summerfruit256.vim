@@ -265,7 +265,7 @@ if has("gui_running") || &t_Co == 88 || &t_Co == 256
     call <SID>X("Statement", "fb660a", "", "")
     call <SID>X("Function", "ff0086", "", "")
     call <SID>X("PreProc", "ff0007", "", "")
-    call <SID>X("Comment", "22a21f", "", "italic")
+    call <SID>X("Comment", "22a21f", "", "")
     call <SID>X("Type", "70796b", "", "")
     call <SID>X("Error", "ffffff", "d40000", "")
     call <SID>X("Identifier", "ff0086", "", "")

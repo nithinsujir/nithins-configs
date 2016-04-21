@@ -552,6 +552,9 @@ ff() {
 			extdrivers/agiga/madura-1.0/driver
 			extdrivers/agiga/madura-1.0/utility
 			extdrivers/agiga/nvdimm_mir
+			extdrivers/xyratex/xybridge/trunk/source/xybridge
+			extdrivers/xyratex/xybridge/trunk/source/xymir
+			extdrivers/xyratex/xybridge/trunk/source/xyvnic
 			extdrivers/diskdump
 			tools/bootctl
 			tools/coredump

@@ -137,7 +137,9 @@ noremap <C-t> :tabnew<CR>
 noremap <M-]> <C-]>z<C-m>
 noremap <M-[> <C-t>
 noremap <M-.> :cn<C-m>
+noremap . :cn<CR>
 noremap <M-,> :cp<C-m>
+noremap , :cp<CR>
 noremap <M-=> 20==
 noremap <M-Space> <C-u>
 
@@ -410,4 +412,16 @@ while c <= '9'
 endw
 
 set timeout ttimeoutlen=50
+
+" Change gnome terminal cursor shape
+if has("autocmd")
+  au VimEnter,InsertLeave * silent execute '!echo -ne "\e[2 q"' | redraw!
+  au InsertEnter,InsertChange *
+    \ if v:insertmode == 'i' | 
+    \   silent execute '!echo -ne "\e[6 q"' | redraw! |
+    \ elseif v:insertmode == 'r' |
+    \   silent execute '!echo -ne "\e[4 q"' | redraw! |
+    \ endif
+  au VimLeave * silent execute '!echo -ne "\e[ q"' | redraw!
+endif
 

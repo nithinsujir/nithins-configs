@@ -1,1 +1,1 @@
-git vim-gtk expect mrxvt zim mercurial tudu meld openssh-server default-jre icedtea-netx ctags cscope openssh-server kmousetool kupfer pidgin rdesktop source-highlight shellcheck evince
+git vim-gtk expect mrxvt zim mercurial tudu meld openssh-server default-jre icedtea-netx ctags cscope openssh-server kmousetool kupfer pidgin rdesktop source-highlight shellcheck evince sshfs cifs-utils sshpass aria2

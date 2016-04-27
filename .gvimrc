@@ -196,10 +196,13 @@ nnoremap ; :
 nnoremap : ;
 
 inoremap <S-Tab> <Tab>
+inoremap <Esc>[Z <Tab>
 inoremap { <Space>{<CR>
 inoremap } <CR>}
 inoremap <M-[> {
+inoremap [  {
 inoremap <M-]> }
+inoremap ] }
 inoremap fj <Esc>
 
 inoremap <M-c> <C-c>a

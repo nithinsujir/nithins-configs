@@ -82,7 +82,7 @@ hgp() {
 	# If branch not passed in use current branch
 	BR=${1:-$( hg branch )}
 
-	for repo in platform fs ui oneui
+	for repo in platform fs ui
 	do
 		pushd $TOPDIR/$repo > /dev/null
 		hg up $BR

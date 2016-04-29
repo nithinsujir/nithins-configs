@@ -86,7 +86,6 @@ hgp() {
 	do
 		pushd $TOPDIR/$repo > /dev/null
 		hg up $BR
-		hgm
 		hg pull
 
 		hg up $BR

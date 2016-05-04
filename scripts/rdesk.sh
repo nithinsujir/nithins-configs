@@ -4,6 +4,8 @@ echo $res
 
 if [[ $res =~ 1600x900 ]]; then
 	res=1600x840
+elif [[ $res =~ 1366x768 ]]; then
+	res=1366x700
 else
 	res=1900x1050
 fi

@@ -216,7 +216,7 @@ alias pxe='ssh -y -Y pxesrv1'
 alias tvm='ssh -y -Y test-vm205'
 alias uvm='ssh -y -Y nsujir-ubuntu14'
 
-alias rsv='rsync -av --exclude="*.swp" $HOME/nithins-configs nsujir-vm:'
+alias rsv='rsync -av --exclude="*.swp" $HOME/nithins-configs nsujir-ws:'
 alias upgl='cd; /auto/e2e/bin/UpgradeTools.py install --rpmpath `readlink latest` '
 alias upglu='cd; /auto/e2e/bin/UpgradeTools.py upgrade --rpmpath `readlink latest` '
 

@@ -44,7 +44,7 @@ Mrxvt.macro.Shift+KP_Subtract:		ResizeFont -1
 #		      GNOME TERMINAL STYLE DEFAULT MACROS
 #
 # ---------------------------------------------------------------------------- #
-Mrxvt.macro.Ctrl+t:		NewTab
+#Mrxvt.macro.Ctrl+t:		NewTab
 Mrxvt.macro.Ctrl+Alt+w:		Close 0
 Mrxvt.macro.Add+Ctrl+w:		ToggleHold -6
 Mrxvt.macro.Ctrl+Shift+q:		Close
@@ -52,16 +52,16 @@ Mrxvt.macro.Ctrl+Shift+q:		Close
 Mrxvt.macro.Ctrl+Prior:			GotoTab -1
 Mrxvt.macro.Ctrl+Next:			GotoTab +1
 
-Mrxvt.macro.Alt+1:			GotoTab 1
-Mrxvt.macro.Alt+2:			GotoTab 2
-Mrxvt.macro.Alt+3:			GotoTab 3
-Mrxvt.macro.Alt+4:			GotoTab 4
-Mrxvt.macro.Alt+5:			GotoTab 5
-Mrxvt.macro.Alt+6:			GotoTab 6
-Mrxvt.macro.Alt+7:			GotoTab 7
-Mrxvt.macro.Alt+8:			GotoTab 8
-Mrxvt.macro.Alt+9:			GotoTab 9
-Mrxvt.macro.Alt+0:			GotoTab 10
+Mrxvt.macro.Ctrl+1:			GotoTab 1
+Mrxvt.macro.Ctrl+2:			GotoTab 2
+Mrxvt.macro.Ctrl+3:			GotoTab 3
+Mrxvt.macro.Ctrl+4:			GotoTab 4
+Mrxvt.macro.Ctrl+5:			GotoTab 5
+Mrxvt.macro.Ctrl+6:			GotoTab 6
+Mrxvt.macro.Ctrl+7:			GotoTab 7
+Mrxvt.macro.Ctrl+8:			GotoTab 8
+Mrxvt.macro.Ctrl+9:			GotoTab 9
+Mrxvt.macro.Ctrl+0:			GotoTab 10
 
 Mrxvt.macro.Ctrl+equal:			ResizeFont +1
 Mrxvt.macro.Ctrl+minus:			ResizeFont -1

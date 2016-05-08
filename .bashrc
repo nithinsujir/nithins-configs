@@ -130,14 +130,15 @@ PS1="\[$txtred\]\A \[$txtgrn\]\h:\w \[$txtcyn\]\[\$(parse_hg_branch)\]\[\$(parse
 
 unset autologout
 
-# Local changes
-if [ -f ~/.bash_local ]; then
-    . ~/.bash_local
-fi
-
 set -o vi
 stty stop undef
 stty start undef
 stty -ixon
 
 TERM=rxvt-unicode-256color
+
+# Local changes. This should be at the end
+if [ -f ~/.bash_local ]; then
+    . ~/.bash_local
+fi
+# NOTE: DON'T ADD ANYTHING AFTER THIS LINE

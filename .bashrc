@@ -140,3 +140,4 @@ stty stop undef
 stty start undef
 stty -ixon
 
+TERM=rxvt-unicode-256color

@@ -135,7 +135,7 @@ stty stop undef
 stty start undef
 stty -ixon
 
-TERM=rxvt-unicode-256color
+TERM=xterm-256color
 
 # Local changes. This should be at the end
 if [ -f ~/.bash_local ]; then

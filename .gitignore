@@ -46,3 +46,4 @@ rmins.sh
 *.class
 *.zip
 *.drjava
+.netrwhist

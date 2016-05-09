@@ -137,8 +137,8 @@ stty -ixon
 
 TERM=xterm-256color
 
+# NOTE: DON'T ADD ANYTHING AFTER THIS LINE
 # Local changes. This should be at the end
 if [ -f ~/.bash_local ]; then
     . ~/.bash_local
 fi
-# NOTE: DON'T ADD ANYTHING AFTER THIS LINE

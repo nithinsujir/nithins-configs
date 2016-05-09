@@ -416,15 +416,12 @@ endw
 
 set timeout ttimeoutlen=50
 
-" Change gnome terminal cursor shape
-if has("autocmd")
-  au VimEnter,InsertLeave * silent execute '!echo -ne "\e[2 q"' | redraw!
-  au InsertEnter,InsertChange *
-    \ if v:insertmode == 'i' | 
-    \   silent execute '!echo -ne "\e[6 q"' | redraw! |
-    \ elseif v:insertmode == 'r' |
-    \   silent execute '!echo -ne "\e[4 q"' | redraw! |
-    \ endif
-  au VimLeave * silent execute '!echo -ne "\e[ q"' | redraw!
+if &term =~ "xterm\\|rxvt"
+  " use an blue cursor in insert mode
+  let &t_SI = "\<Esc>]12;orange\x7"
+  " use a red cursor otherwise
+  let &t_EI = "\<Esc>]12;green\x7"
+  " reset cursor when vim exits
+  autocmd VimLeave * silent !echo -ne "\033]112\007"
 endif
 

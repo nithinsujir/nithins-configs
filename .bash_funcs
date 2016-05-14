@@ -3,6 +3,7 @@ CPUS=$(grep processor /proc/cpuinfo | wc -l)
 THREADS=$((CPUS*2))
 SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
+IRDEXPLODE=/root/initrd_explode
 
 
 esn() {
@@ -413,7 +414,6 @@ xsold() {
 
 iu() {
 	local MNT=/media
-	local EXPLODE_DIR=/root/initrd_explode
 	mkdir -p $MNT
 
 	boot_dom=$(/usr/local/tintri/bin/list_disks -i)
@@ -423,13 +423,13 @@ iu() {
 		boot_dom=/dev/sda
 	fi
 
-	if [ -d $EXPLODE_DIR ]
+	if [ -d $IRDEXPLODE ]
 	then
 		return
 	fi
 
-	mkdir $EXPLODE_DIR
-	cd $EXPLODE_DIR
+	mkdir $IRDEXPLODE
+	cd $IRDEXPLODE
 
 	mount ${boot_dom}1 $MNT
 	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
@@ -444,10 +444,9 @@ liu() {
 }
 
 IU() {
-	local EXPLODE_DIR=/root/initrd_explode
 	local MNT=/media
 
-	rm -rf $EXPLODE_DIR
+	rm -rf $IRDEXPLODE
 
 	if grep -q $MNT /proc/mounts; then
 		umount $MNT
@@ -458,9 +457,8 @@ IU() {
 
 iz() {
 	local MNT=/media
-	local EXPLODE_DIR=/root/initrd_explode
 
-	if [ ! -d $EXPLODE_DIR ]
+	if [ ! -d $IRDEXPLODE ]
 	then
 		echo "initrd not exploded"
 		return
@@ -475,7 +473,7 @@ iz() {
 
 	mount ${boot_dom}1 $MNT
 
-	cd $EXPLODE_DIR
+	cd $IRDEXPLODE
 	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
 	find . | cpio -H newc -o | gzip -1 > $MNT/$INITRD
 	umount $MNT
@@ -918,3 +916,260 @@ bmclog() {
 	echo "Saving to $target-bmc.log"
 	sshpass -p superuser ssh -o StrictHostKeyChecking=no sysadmin@$target-ipmi "BMC_CollectLogs.sh" $target-bmc.log
 }
+
+smd() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	fils=(
+		$TOPDIR/kbuild/drivers/md/md-mod.ko
+		$TOPDIR/kbuild/drivers/md/raid10.ko
+	     )
+
+	ssh root@${target} iu
+
+	for fil in ${fils[@]} ; do
+		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/md/
+		$SCP $fil root@${target}:/lib/modules/$kernel/kernel/drivers/md/
+	done
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+sipmi() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	fils=(
+		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_devintf.ko
+		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_msghandler.ko
+		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_poweroff.ko
+		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_si.ko
+		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_watchdog.ko
+	     )
+
+	ssh root@${target} iu
+
+	for fil in ${fils[@]} ; do
+		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/char/ipmi/
+		$SCP $fil root@${target}:/lib/modules/$kernel/kernel/drivers/char/ipmi/
+	done
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+sha() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	fils=(
+		extdrivers/hactl/hactl.ko
+	     )
+
+	ssh root@${target} iu
+
+	for fil in ${fils[@]} ; do
+		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+		$SCP $fil root@${target}:
+	done
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+scs() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	fils=(
+		extdrivers/diskdump/diskdump.ko
+		extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas/mpt3sas.ko
+	     )
+
+	ssh root@${target} iu
+
+	for fil in ${fils[@]} ; do
+		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+		$SCP $fil root@${target}:
+	done
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+scv() {
+	target=$1
+	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:/boot
+	$SCP $TOPDIR/kbuild/install.d/vmlinux root@${target}:/boot
+
+	ssh root@${target} iu
+
+	vml=$( ssh root@${target} grep vmlinuz $MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
+	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:$MNT/$vml
+	ssh root@${target} sync
+}
+
+scd() {
+	target=$1
+	fils=(
+		#$TOPDIR/platform/os/tools/scripts/cmn_funcs
+		#$TOPDIR/platform/os/tools/scripts/init_disks
+		#$TOPDIR/platform/os/tools/diskmgt/list_disks
+		#$TOPDIR/platform/os/tools/diskmgt/disksig
+		#$TOPDIR/platform/os/scripts/tools/disksig-install
+		#$TOPDIR/platform/os/tools/scripts/partition_hdd
+		#$TOPDIR/platform/os/tools/scripts/partition_haboot
+		#$TOPDIR/platform/os/tools/scripts/partition_md
+		#$TOPDIR/platform/os/tools/scripts/verify_mdpsize
+		#$TOPDIR/platform/os/tools/scripts/create_md
+		#$TOPDIR/platform/os/tools/scripts/boot_check
+		#$TOPDIR/platform/os/tools/scripts/inst_grub
+		#$TOPDIR/platform/os/tools/scripts/inst_bootfiles
+		#$TOPDIR/platform/os/tools/scripts/assemble_md
+		#$TOPDIR/platform/os/tools/bootctl/boot_fsck
+		$TOPDIR/kbuild/drivers/misc/enclosure.ko
+		$TOPDIR/kbuild/drivers/scsi/ses.ko
+		);
+
+	for fil in ${fils[@]} ; do
+		$SCP $fil root@$1:
+	done
+	ssh root@${target} sync
+}
+
+scn() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	ssh root@${target} iu
+
+	$SCP extdrivers/nvx/nvx.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+srpmc() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	(
+		set -o errexit
+
+		$SCP extdrivers/nvx/nvx.ko root@${target}a:/lib/modules/$kernel/extra/
+		$SCP extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1/pmc.ko root@${target}a:/lib/modules/$kernel/extra/
+
+		$SCP extdrivers/nvx/nvx.ko root@${target}b:/lib/modules/$kernel/extra/
+		$SCP extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1/pmc.ko root@${target}b:/lib/modules/$kernel/extra/
+
+		ssh root@${target} sync
+	)
+	return $?
+}
+
+SRPMC() {
+	target=$1
+
+	srpmc ${target}a && ssh root@${target}a reboot
+	srpmc ${target}b && ssh root@${target}b reboot
+}
+
+spm() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	ssh root@${target} iu
+
+	$SCP extdrivers/nvx/nvx.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+	$SCP extdrivers/nvx/nvx.ko root@${target}:/lib/modules/$kernel/extra/
+	$SCP extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1/pmc.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+	$SCP extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1/pmc.ko root@${target}:/lib/modules/$kernel/extra/
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+SCN() {
+	target=$1
+	scn $target
+	ssh root@${target} reboot
+}
+
+scix() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/net/ixgbe/
+	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:/lib/modules/$kernel/kernel/drivers/net/ixgbe/
+
+	ssh root@${target} sync
+}
+
+SCIX() {
+	target=$1
+	scix $target
+	ssh root@${target} rmmod ixgbe
+	ssh root@${target} modprobe ixgbe
+}
+
+scnv() {
+	target=$1
+
+	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}a:
+	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}b:
+	ssh root@${target} sync
+}
+
+smir() {
+	target=$1
+
+	$SCP $TOPDIR/platform/os/tools/nvram/nvx root@${target}a:/tmp
+	$SCP $TOPDIR/platform/test/nvram/mirtest.sh root@${target}a:/tmp
+	$SCP $TOPDIR/platform/test/nvram/nvmir root@${target}a:/tmp
+	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}a:
+
+	$SCP $TOPDIR/platform/os/tools/nvram/nvx root@${target}b:/tmp
+	$SCP $TOPDIR/platform/test/nvram/mirtest.sh root@${target}b:/tmp
+	$SCP $TOPDIR/platform/test/nvram/nvmir root@${target}b:/tmp
+	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}b:
+}
+
+scnvd() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	ssh root@${target} iu
+
+	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+	$SCP extdrivers/xyratex/xybridge/trunk/source/xyvnic/xyvnic.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xyvnic
+	$SCP extdrivers/xyratex/xybridge/trunk/source/xymir/ntb_mir.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xymir/
+	$SCP extdrivers/xyratex/xybridge/trunk/source/xybridge/xybridge.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xybridge/
+	$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+
+
+	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:/lib/modules/$kernel/extra/
+	$SCP extdrivers/xyratex/xybridge/trunk/source/xyvnic/xyvnic.ko root@${target}:/lib/modules/$kernel/extra/xyvnic/
+	$SCP extdrivers/xyratex/xybridge/trunk/source/xymir/ntb_mir.ko root@${target}:/lib/modules/$kernel/extra/xymir/
+	$SCP extdrivers/xyratex/xybridge/trunk/source/xybridge/xybridge.ko root@${target}:/lib/modules/$kernel/extra/xybridge/
+	$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:/lib/modules/$kernel/extra/
+
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+
+scag() {
+	target=$1
+	kernel=$( ssh root@${target} uname -r )
+
+	ssh root@${target} iu
+
+	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:/lib/modules/$kernel/extra/
+
+	ssh root@${target} iz
+	ssh root@${target} sync
+}
+

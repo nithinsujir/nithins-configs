@@ -919,27 +919,27 @@ bmclog() {
 
 smd() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	fils=(
 		$TOPDIR/kbuild/drivers/md/md-mod.ko
 		$TOPDIR/kbuild/drivers/md/raid10.ko
 	     )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	for fil in ${fils[@]} ; do
 		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/md/
 		$SCP $fil root@${target}:/lib/modules/$kernel/kernel/drivers/md/
 	done
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 
 sipmi() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	fils=(
 		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_devintf.ko
@@ -949,54 +949,54 @@ sipmi() {
 		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_watchdog.ko
 	     )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	for fil in ${fils[@]} ; do
 		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/char/ipmi/
 		$SCP $fil root@${target}:/lib/modules/$kernel/kernel/drivers/char/ipmi/
 	done
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 
 sha() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	fils=(
 		extdrivers/hactl/hactl.ko
 	     )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	for fil in ${fils[@]} ; do
 		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 		$SCP $fil root@${target}:
 	done
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 
 scs() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	fils=(
 		extdrivers/diskdump/diskdump.ko
 		extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas/mpt3sas.ko
 	     )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	for fil in ${fils[@]} ; do
 		$SCP $fil root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 		$SCP $fil root@${target}:
 	done
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 
 scv() {
@@ -1004,11 +1004,11 @@ scv() {
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:/boot
 	$SCP $TOPDIR/kbuild/install.d/vmlinux root@${target}:/boot
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	vml=$( ssh root@${target} grep vmlinuz $MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:$MNT/$vml
-	ssh root@${target} sync
+	$SSH root@${target} sync
 }
 
 scd() {
@@ -1036,19 +1036,19 @@ scd() {
 	for fil in ${fils[@]} ; do
 		$SCP $fil root@$1:
 	done
-	ssh root@${target} sync
+	$SSH root@${target} sync
 }
 
 scn() {
 	target=$1
 	kernel=$( ssh root@${target} uname -r )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	$SCP extdrivers/nvx/nvx.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 
 srpmc() {
@@ -1080,21 +1080,21 @@ spm() {
 	target=$1
 	kernel=$( ssh root@${target} uname -r )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	$SCP extdrivers/nvx/nvx.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 	$SCP extdrivers/nvx/nvx.ko root@${target}:/lib/modules/$kernel/extra/
 	$SCP extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1/pmc.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 	$SCP extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1/pmc.ko root@${target}:/lib/modules/$kernel/extra/
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 
 SCN() {
 	target=$1
 	scn $target
-	ssh root@${target} reboot
+	$SSH root@${target} reboot
 }
 
 scix() {
@@ -1104,14 +1104,14 @@ scix() {
 	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/net/ixgbe/
 	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:/lib/modules/$kernel/kernel/drivers/net/ixgbe/
 
-	ssh root@${target} sync
+	$SSH root@${target} sync
 }
 
 SCIX() {
 	target=$1
 	scix $target
-	ssh root@${target} rmmod ixgbe
-	ssh root@${target} modprobe ixgbe
+	$SSH root@${target} rmmod ixgbe
+	$SSH root@${target} modprobe ixgbe
 }
 
 scnv() {
@@ -1119,7 +1119,7 @@ scnv() {
 
 	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}a:
 	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}b:
-	ssh root@${target} sync
+	$SSH root@${target} sync
 }
 
 smir() {
@@ -1140,7 +1140,8 @@ scnvd() {
 	target=$1
 	kernel=$( ssh root@${target} uname -r )
 
-	ssh root@${target} iu
+	set -x
+	$SSH root@${target} iu
 
 	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 	$SCP extdrivers/xyratex/xybridge/trunk/source/xyvnic/xyvnic.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xyvnic
@@ -1156,20 +1157,21 @@ scnvd() {
 	$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:/lib/modules/$kernel/extra/
 
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
+	set +x
 }
 
 scag() {
 	target=$1
 	kernel=$( ssh root@${target} uname -r )
 
-	ssh root@${target} iu
+	$SSH root@${target} iu
 
 	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:/lib/modules/$kernel/extra/
 
-	ssh root@${target} iz
-	ssh root@${target} sync
+	$SSH root@${target} iz
+	$SSH root@${target} sync
 }
 

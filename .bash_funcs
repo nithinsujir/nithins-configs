@@ -1140,7 +1140,6 @@ scnvd() {
 	target=$1
 	kernel=$( ssh root@${target} uname -r )
 
-	set -x
 	$SSH root@${target} iu
 
 	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
@@ -1159,7 +1158,6 @@ scnvd() {
 
 	$SSH root@${target} iz
 	$SSH root@${target} sync
-	set +x
 }
 
 scag() {

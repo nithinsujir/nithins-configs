@@ -4,6 +4,7 @@ THREADS=$((CPUS*2))
 SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 IRDEXPLODE=/root/initrd_explode
+BDOM_MNT=/bdom
 
 
 esn() {
@@ -410,6 +411,17 @@ xsel() {
 
 xsold() {
 	ipmitool -I lanplus -U admin -P admin -H $1-ipmi sol deactivate
+}
+
+mbd() {
+	mkdir -p $BDOM_MNT
+
+	boot_dom=$(/usr/local/tintri/bin/list_disks -i)
+	mount ${boot_dom}1 $BDOM_MNT
+}
+
+ubd() {
+	umount $BDOM_MNT
 }
 
 iu() {
@@ -1004,10 +1016,11 @@ scv() {
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:/boot
 	$SCP $TOPDIR/kbuild/install.d/vmlinux root@${target}:/boot
 
-	$SSH root@${target} iu
+	$SSH root@${target} mbd
 
-	vml=$( ssh root@${target} grep vmlinuz $MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
-	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:$MNT/$vml
+	vml=$( ssh root@${target} grep vmlinuz $BDOM_MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
+	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:$BDOM_MNT/$vml
+	$SSH root@${target} ubd
 	$SSH root@${target} sync
 }
 

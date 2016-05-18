@@ -1018,7 +1018,7 @@ scv() {
 
 	$SSH root@${target} mbd
 
-	vml=$( ssh root@${target} grep vmlinuz $BDOM_MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
+	vml=$( $SSH root@${target} grep vmlinuz $BDOM_MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:$BDOM_MNT/$vml
 	$SSH root@${target} ubd
 	$SSH root@${target} sync

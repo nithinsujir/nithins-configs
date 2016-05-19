@@ -626,7 +626,7 @@ tsh() {
 	tsa $target
 
 	shift
-	$SSH $target $@
+	$SSH root@$target $@
 }
 
 ish() {

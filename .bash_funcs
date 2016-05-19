@@ -620,20 +620,13 @@ btools() {
 	popd > /dev/null
 }
 
-_ssh() {
-	target=$1
-	shift
-	/usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error root@$target $@
-
-}
-
 tsh() {
 	target=$1
 
 	tsa $target
 
 	shift
-	_ssh $target $@
+	$SSH $target $@
 }
 
 ish() {
@@ -663,12 +656,12 @@ cvm() {
 	tcp $1 ~/.bf
 	tsh $1 rm -rf /root/nsujir
 	scp -r ~/tintri/vmstore-custom/ root@$1:nsujir
-	_ssh $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
-	_ssh $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
-	_ssh $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
-	_ssh $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
-	_ssh $1 ln -sf /root/nsujir/.profile /root/
-	_ssh $1 ln -sf /root/nsujir/.bashrc /root/
+	$SSH $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
+	$SSH $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
+	$SSH $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
+	$SSH $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
+	$SSH $1 ln -sf /root/nsujir/.profile /root/
+	$SSH $1 ln -sf /root/nsujir/.bashrc /root/
 }
 
 # isolsetup

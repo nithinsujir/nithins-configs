@@ -1047,7 +1047,7 @@ scd() {
 
 scn() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 
@@ -1059,7 +1059,7 @@ scn() {
 
 srpmc() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	(
 		set -o errexit
@@ -1078,13 +1078,13 @@ srpmc() {
 SRPMC() {
 	target=$1
 
-	srpmc ${target}a && ssh root@${target}a reboot
-	srpmc ${target}b && ssh root@${target}b reboot
+	srpmc ${target}a && $SSH root@${target}a reboot
+	srpmc ${target}b && $SSH root@${target}b reboot
 }
 
 spm() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 
@@ -1105,7 +1105,7 @@ SCN() {
 
 scix() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/net/ixgbe/
 	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:/lib/modules/$kernel/kernel/drivers/net/ixgbe/
@@ -1144,7 +1144,7 @@ smir() {
 
 scnvd() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 
@@ -1168,7 +1168,7 @@ scnvd() {
 
 scag() {
 	target=$1
-	kernel=$( ssh root@${target} uname -r )
+	kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 

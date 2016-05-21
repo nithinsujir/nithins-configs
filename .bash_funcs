@@ -655,13 +655,13 @@ drpms() {
 cvm() {
 	tcp $1 ~/.bf
 	tsh $1 rm -rf /root/nsujir
-	scp -r ~/tintri/vmstore-custom/ root@$1:nsujir
-	$SSH $1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
-	$SSH $1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
-	$SSH $1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
-	$SSH $1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
-	$SSH $1 ln -sf /root/nsujir/.profile /root/
-	$SSH $1 ln -sf /root/nsujir/.bashrc /root/
+	$SCP -r ~/tintri/vmstore-custom/ root@$1:nsujir
+	$SSH root@$1 ln -sf /usr/tintri/bin/PlatCmd /root/nsujir/platcmd
+	$SSH root@$1 ln -sf /usr/tintri/bin/HAMonCmd /root/nsujir/hamoncmd
+	$SSH root@$1 ln -sf /usr/tintri/bin/ProcMonCmd /root/nsujir/procmoncmd
+	$SSH root@$1 ln -sf /root/nsujir/isolsetup.sh /usr/local/tintri/bin
+	$SSH root@$1 ln -sf /root/nsujir/.profile /root/
+	$SSH root@$1 ln -sf /root/nsujir/.bashrc /root/
 }
 
 # isolsetup

@@ -40,16 +40,18 @@ tls = starttls
 from = Nithin Sujir <nsujir@tintri.com>
 
 [extdiff]
-cmd.vd = gvim
+cmd.vd = vim
 opts.vd = -f '+next' '+execute "DirDiff" fnameescape(argv(0)) fnameescape(argv(1))'
+cmd.gvd = gvim
+opts.gvd = -f '+next' '+execute "DirDiff" fnameescape(argv(0)) fnameescape(argv(1))'
 
 
 [tortoisehg]
 fontcomment = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
 fontdiff = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
-fontlog = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+fontlog = Sans Serif,9,-1,5,50,0,0,0,0,0
 fontoutputlog = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
-fontlist = Ubuntu Mono,11,-1,5,50,0,0,0,0,0
+fontlist = Sans Serif,10,-1,5,50,0,0,0,0,0
 
 [hgview]
 interface = raw

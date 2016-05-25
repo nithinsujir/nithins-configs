@@ -7,6 +7,6 @@ spawn /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no s
 expect "password:"
 send "superuser\n"
 expect "#"
-send -- "/etc/init.d/webgo.sh restart\n"
+send -- "reboot\n"
 expect "#"
 

@@ -42,6 +42,7 @@ set nobackup
 set autoindent
 " Reads changed files automatically. Dangerous??
 set autoread
+autocmd CursorHold * checktime
 set autowriteall
 set backupdir=/tmp
 set cinoptions+=l1

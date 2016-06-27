@@ -206,7 +206,7 @@ sc() {
 			LABEL nsujir $PREFIX$LABEL
 				MENU LABEL nsujir $PREFIX$LABEL
 				KERNEL images/txos/nsujir/vmlinuz.$TVER
-				APPEND initrd=images/txos/nsujir/initrd.$TVER NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder verbose ftpserver=10.10.10.186 installvers=$TVER devpassword=tintri99 nowdog nosec nomdwait
+				APPEND initrd=images/txos/nsujir/initrd.$TVER NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder verbose ftpserver=10.10.10.186 installvers=$TVER devpassword=tintri99 nowdog nosec smallmd
 
 		EOF
 	fi

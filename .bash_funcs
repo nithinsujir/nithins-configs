@@ -738,8 +738,8 @@ upgd() {
 
 upgt() {
 	if [[ -z $1 || -z $2 ]]; then
-		echo "$0 <target> <rpm>"
-		return -1
+		echo "upgt <target> <rpm>"
+		return 1
 	fi
 
 	target=$1

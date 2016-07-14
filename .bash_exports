@@ -10,8 +10,10 @@ export tit=/tftpboot/images/txos/
 export naeb=/net/auto-distrobld-archive/exports/build/
 export dtx=/net/auto-distrobld-archive/exports/savedrpms/default/txos/
 export agd=extdrivers/agiga/madura-1.0/driver/
+export xyb=extdrivers/xyratex/xybridge/trunk/source/xybridge/
+export xyv=extdrivers/xyratex/xybridge/trunk/source/xyvnic/
 
-export PATH=.:/usr/local/sbin:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
+export PATH=.:/usr/local/sbin:/usr/bin/:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
 #export P4PORT=pf-irva-ecs.broadcom.com:1666
 #export P4PORT=10.220.0.62:1667
 #export P4USER=nsujir

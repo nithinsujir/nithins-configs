@@ -57,7 +57,7 @@ Mrxvt.macro.Ctrl+2:			GotoTab 2
 Mrxvt.macro.Ctrl+3:			GotoTab 3
 Mrxvt.macro.Ctrl+4:			GotoTab 4
 Mrxvt.macro.Ctrl+5:			GotoTab 5
-Mrxvt.macro.Ctrl+6:			GotoTab 6
+Mrxvt.macro.Ctrl+Shift+6:		GotoTab 6
 Mrxvt.macro.Ctrl+7:			GotoTab 7
 Mrxvt.macro.Ctrl+8:			GotoTab 8
 Mrxvt.macro.Ctrl+9:			GotoTab 9

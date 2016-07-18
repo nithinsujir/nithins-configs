@@ -558,22 +558,13 @@ ff() {
 			extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas
 			extdrivers/intel/enet/ixgbe-3.11.33/src
 			extdrivers/nvx
-			extdrivers/agiga/madura-1.0/driver
-			extdrivers/agiga/madura-1.0/utility
+			extdrivers/agiga/madura-1.0/
 			extdrivers/agiga/nvdimm_mir
-			extdrivers/xyratex/xybridge/trunk/source/xybridge
-			extdrivers/xyratex/xybridge/trunk/source/xymir
-			extdrivers/xyratex/xybridge/trunk/source/xyvnic
+			extdrivers/xyratex/xybridge/
 			extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1
 			extdrivers/diskdump
-			tools/bootctl
-			tools/coredump
-			tools/diskmgt
-			tools/savecore
-			tools/scripts
-			tools/shared
-			scripts/tools
-			scripts/common
+			tools/
+			scripts/
 
 		)
 	elif [[ $repo == "fs" ]] ; then
@@ -583,8 +574,7 @@ ff() {
 			src/interface/*
 		)
 	else
-		echo "Unsupported location $repo"
-		return
+		dirs=( . )
 	fi
 
 	rm -rf .fufcache
@@ -593,7 +583,7 @@ ff() {
 	mkdir -p .fufcache
 
 	for dirname in ${dirs[@]}; do
-		file $dirname/* | grep text | awk -F : {'print $1;'} >> fuf.files
+		find $dirname/ | xargs file | grep -e program -e script | awk -F : {'print $1;'} >> fuf.files
 	done
 
 	cd .fufcache

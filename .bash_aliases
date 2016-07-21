@@ -213,7 +213,7 @@ alias nvm3='ssh -y -Y nsujir-vm3'
 alias nvm4='ssh -y -Y nsujir-vm4'
 alias nws='ssh -y -Y nsujir-ws'
 alias pxe='ssh -y -Y pxesrv1'
-alias tvm='ssh -y -Y test-vm205'
+alias tvm='ssh -y -Y root@test-vm205'
 alias uvm='ssh -y -Y nsujir-ubuntu14'
 
 #alias rsv='rsync -av --exclude="*.swp" $HOME/nithins-configs nsujir-ws:'

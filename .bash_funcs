@@ -166,8 +166,8 @@ sc() {
 	ssh -o loglevel=error root@pxesrv1 mkdir -p $TREL/$TVER
 	ssh -o loglevel=error root@pxesrv1 mkdir -p $TITN/$TVER
 
-	echo "scp -o loglevel=error $TRPM $TVM:txos/"
-	scp -o loglevel=error $TRPM $TVM:txos/ &
+	echo "scp -o loglevel=error $TRPM root@$TVM:txos/"
+	scp -o loglevel=error $TRPM root@$TVM:txos/ &
 
 	echo "scp $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN"
 	scp -o loglevel=error $TOPDIR/distro_bld/sysimage/boot/vmlinuz root@pxesrv1:$TITN/vmlinuz.$TVER
@@ -218,7 +218,7 @@ sc() {
 	scp -o loglevel=error /tmp/nsujir.menu root@pxesrv1:/tftpboot/pxelinux.cfg/
 
 	wait
-	ssh -o loglevel=error $TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
+	ssh -o loglevel=error root@$TVM ln -sf txos/txos-${TVER}.x86_64.rpm latest
 }
 
 FS() {
@@ -726,6 +726,38 @@ upgd() {
 	/auto/e2e/bin/UpgradeTools.py install --branch default $target
 }
 
+upgrade_txos() {
+	target=$1
+	rpm=$2
+
+	/bin/ping -c 1 -W 3 ${target} 2>&1 > /dev/null
+	if [[ $? -ne 0 ]]; then
+		echo "${target} not accessible"
+		return 1
+	fi
+
+	echo "scp'ing $rpm to $target"
+	echo "$SCP $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/$rpm root@${target}:/var/releases/upload"
+	$SCP $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/$rpm root@${target}:/var/releases/upload
+	if [[ $? -ne 0 ]]; then
+		echo "scp failed to controller A"
+		return 1
+	fi
+
+	echo "Stopping services"
+	$SSH root@${target} "/sbin/service postgresql-perf stop"
+	$SSH root@${target} "/sbin/service txos stop"
+
+	echo "Starting upgrade_txos on $target"
+	$SSH root@${target} "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
+	if [[ $? -ne 124 ]]; then
+		echo "Upgrade failed on $target"
+	else
+		$SSH root@${target} "reboot"
+	fi
+
+}
+
 upgt() {
 	if [[ -z $1 || -z $2 ]]; then
 		echo "upgt <target> <rpm>"
@@ -735,51 +767,13 @@ upgt() {
 	target=$1
 	rpm=$(basename $2)
 
-	/bin/ping -c 1 -W 3 ${target}a 2>&1 > /dev/null
-	if [[ $? -ne 0 ]]; then
-		echo "${target}a not accessible"
-		return 1
-	fi
+	isha=$($SSH root@$target /usr/local/tintri/bin/isha)
 
-	/bin/ping -c 1 -W 3 ${target}b 2>&1 > /dev/null
-	if [[ $? -ne 0 ]]; then
-		echo "${target}a not accessible"
-		return 1
-	fi
-
-	echo "scp'ing $rpm"
-	$SCP $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/$rpm root@${target}a:/var/releases/upload
-	if [[ $? -ne 0 ]]; then
-		echo "scp failed to controller A"
-		return 1
-	fi
-
-	$SCP $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/$rpm root@${target}b:/var/releases/upload
-	if [[ $? -ne 0 ]]; then
-		echo "scp failed to controller B"
-		return 1
-	fi
-
-	echo "Stopping services"
-	$SSH root@${target}a "/sbin/service postgresql-perf stop"
-	$SSH root@${target}a "/sbin/service txos stop"
-	$SSH root@${target}b "/sbin/service postgresql-perf stop"
-	$SSH root@${target}b "/sbin/service txos stop"
-
-	echo "Starting upgrade_txos on A"
-	$SSH root@${target}a "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
-	if [[ $? -ne 124 ]]; then
-		echo "Upgrade failed on controller A"
+	if [[ $isha -eq 0 ]]; then
+		upgrade_txos $target $rpm
 	else
-		$SSH root@${target}a "reboot"
-	fi
-
-	echo "Starting upgrade_txos on B"
-	$SSH root@${target}b "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"
-	if [[ $? -ne 124 ]]; then
-		echo "Upgrade failed on controller B"
-	else
-		$SSH root@${target}b "reboot"
+		upgrade_txos ${target}a $rpm
+		upgrade_txos ${target}b $rpm
 	fi
 }
 

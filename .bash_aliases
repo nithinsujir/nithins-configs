@@ -235,6 +235,7 @@ alias fs='cd $TOPDIR/fs'
 alias ui='cd $TOPDIR/ui'
 alias oi='cd $TOPDIR/oneui'
 alias ke='cd $TOPDIR/kernel'
+alias pk='cd $TOPDIR/plat-os/fedora12'
 
 alias MD='mount /data; mount /data2; mount /data3'
 alias UD='umount /data; umount /data2; umount /data3'

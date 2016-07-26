@@ -16,7 +16,7 @@ parse_git_branch() {
 }
 
 parse_hg_branch() {
-    curdir=`pwd`
+    local curdir=`pwd`
 
     while [ "$curdir" != "/" ]
     do
@@ -31,7 +31,7 @@ parse_hg_branch() {
 }
 
 cur_hg_bookmark() {
-    curdir=`pwd`
+    local curdir=`pwd`
 
     while [ "$curdir" != "/" ]
     do
@@ -47,7 +47,7 @@ cur_hg_bookmark() {
 }
 
 parse_hg_bookmark() {
-	book=$(cur_hg_bookmark)
+	local book=$(cur_hg_bookmark)
 
 	if [[ x$book == x ]] ; then
 		return
@@ -59,7 +59,7 @@ parse_hg_bookmark() {
 hgm() {
 	hg paths | grep -q tintri
 
-	BR=`hg branch`
+	local BR=`hg branch`
 
 	if [ $BR == "default" ]
 	then
@@ -70,7 +70,7 @@ hgm() {
 }
 
 hgmf() {
-	BR=`hg branch`
+	local BR=`hg branch`
 
 	if [ $BR == "default" ]
 	then
@@ -82,7 +82,7 @@ hgmf() {
 
 hgp() {
 	# If branch not passed in use current branch
-	BR=${1:-$( hg branch )}
+	local BR=${1:-$( hg branch )}
 
 	for repo in platform fs ui
 	do
@@ -121,15 +121,15 @@ HGMF() {
 }
 
 hgbr() {
-	BR=$1
-	BR_ROOT=`hg out -r $BR | grep changeset | head -n 1 | awk {'print $2;'}`
+	local BR=$1
+	local BR_ROOT=`hg out -r $BR | grep changeset | head -n 1 | awk {'print $2;'}`
 
 	hg rebase -s $BR_ROOT -d .
 	hg up $BR
 }
 
 hgho() {
-	BR_ROOT=`hg out -r . | grep changeset | head -n 1 | awk {'print $2;'}`
+	local BR_ROOT=`hg out -r . | grep changeset | head -n 1 | awk {'print $2;'}`
 	hg histedit $BR_ROOT
 }
 
@@ -519,8 +519,8 @@ scz() {
 }
 
 hgl() {
-	rev=.
-	p=
+	local rev=.
+	local p=
 
 	if [[ ! -z $1 && $1 == "-p" ]]
 	then
@@ -544,7 +544,7 @@ hgl() {
 }
 
 ff() {
-	repo=$(basename `pwd`)
+	local repo=$(basename `pwd`)
 
 	if [[ $repo == "os" ]] ; then
 		dirs=(
@@ -596,9 +596,9 @@ ff() {
 }
 
 hge() {
-	rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
-	rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
-	dest=$HOME/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
+	local rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
+	local rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
+	local dest=$HOME/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
 	mkdir -p $dest
 
 	hg export -r $rev_start:$rev_end -o "$dest/%n-%m.patch"
@@ -612,7 +612,7 @@ btools() {
 }
 
 tsh() {
-	target=$1
+	local target=$1
 
 	tsa $target
 
@@ -621,12 +621,12 @@ tsh() {
 }
 
 ish() {
-	target=$1-ipmi
+	local target=$1-ipmi
 	sshpass  -p superuser ssh -o StrictHostKeyChecking=no sysadmin@$target
 }
 
 tcp() {
-	target=$1
+	local target=$1
 
 	tsa $target
 
@@ -657,9 +657,9 @@ cvm() {
 
 # isolsetup
 isols() {
-	target=$1
-	ip=$(ping -c 1 -W 1 $target-ipmi | grep $target | grep PING | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
-	mask=$(ping -c 1 -W 1 $target-ipmi | grep $target | grep PING | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.')0.1
+	local target=$1
+	local ip=$(ping -c 1 -W 1 $target-ipmi | grep $target | grep PING | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}')
+	local mask=$(ping -c 1 -W 1 $target-ipmi | grep $target | grep PING | grep -o '[0-9]\{1,3\}\.[0-9]\{1,3\}\.')0.1
 
 	tsh $1 "/root/nsujir/isolsetup.sh $ip $mask"
 }
@@ -676,20 +676,20 @@ ZSDA() {
 
 # Link the last built util, fs and ui rpms
 lnt() {
-	TOPVER=$($TOPDIR/platform/distro/tools/gen_bldnum $TOPDIR/platform)
+	local TOPVER=$($TOPDIR/platform/distro/tools/gen_bldnum $TOPDIR/platform)
 
 	pushd $TOPDIR/distro_bld/local_rpms/RPMS/x86_64 > /dev/null
 
-	fbase=$(ls -1rt filesystem_base* | tail -n 1)
-	new_fbase=$(echo $fbase | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
+	local fbase=$(ls -1rt filesystem_base* | tail -n 1)
+	local new_fbase=$(echo $fbase | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
 	sudo ln -f $fbase $new_fbase
 
-	ubase=$(ls -1rt ui_base* | tail -n 1)
-	new_ubase=$(echo $ubase | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
+	local ubase=$(ls -1rt ui_base* | tail -n 1)
+	local new_ubase=$(echo $ubase | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
 	sudo ln -f $ubase $new_ubase
 
-	baseu=$(ls -1rt base_utils* | tail -n 1)
-	new_baseu=$(echo $baseu | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
+	local baseu=$(ls -1rt base_utils* | tail -n 1)
+	local new_baseu=$(echo $baseu | sed 's/[0-9][0-9][0-9][0-9]/'$TOPVER/)
 	sudo ln -f $baseu $new_baseu
 
 	popd > /dev/null
@@ -697,7 +697,7 @@ lnt() {
 
 # grep script and usual accessed folders
 grs() {
-	sstring=$1
+	local sstring=$1
 	shift
 
 	dirs=(tools scripts ../distro/*overlay ../distro/spec ../distro/tools $TOPDIR/fs/src $TOPDIR/ui/platform)
@@ -709,8 +709,8 @@ grs() {
 
 # Upgrade txos
 upg() {
-	txos=$1
-	target=$2
+	local txos=$1
+	local target=$2
 	/auto/e2e/bin/UpgradeTools.py install --rpmpath $txos $target
 }
 
@@ -843,12 +843,12 @@ hgd() {
 }
 
 mt() {
-	title=$1
+	local title=$1
 	echo -ne "\e]62;$title\a"
 }
 
 oob() {
-	target=$1
+	local target=$1
 
 	ssh root@$target "/usr/bin/java -jar /opt/tintri/thrift_to_soap.jar localhost SystemManagementService setConsoleOobStates true true"
 }
@@ -908,10 +908,10 @@ bmclog() {
 }
 
 smd() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
-	fils=(
+	local fils=(
 		$TOPDIR/kbuild/drivers/md/md-mod.ko
 		$TOPDIR/kbuild/drivers/md/raid10.ko
 	     )
@@ -928,10 +928,10 @@ smd() {
 }
 
 sipmi() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
-	fils=(
+	local fils=(
 		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_devintf.ko
 		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_msghandler.ko
 		$TOPDIR/kbuild/drivers/char/ipmi/ipmi_poweroff.ko
@@ -951,10 +951,10 @@ sipmi() {
 }
 
 sha() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
-	fils=(
+	local fils=(
 		extdrivers/hactl/hactl.ko
 	     )
 
@@ -970,10 +970,10 @@ sha() {
 }
 
 scs() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
-	fils=(
+	local fils=(
 		extdrivers/diskdump/diskdump.ko
 		extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas/mpt3sas.ko
 	     )
@@ -990,21 +990,21 @@ scs() {
 }
 
 scv() {
-	target=$1
+	local target=$1
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:/boot
 	$SCP $TOPDIR/kbuild/install.d/vmlinux root@${target}:/boot
 
 	$SSH root@${target} mbd
 
-	vml=$( $SSH root@${target} grep vmlinuz $BDOM_MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
+	local vml=$( $SSH root@${target} grep vmlinuz $BDOM_MNT/grub/grub.conf | head -n 1 | awk {'print $2;'} )
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:$BDOM_MNT/$vml
 	$SSH root@${target} ubd
 	$SSH root@${target} sync
 }
 
 scd() {
-	target=$1
-	fils=(
+	local target=$1
+	local fils=(
 		#$TOPDIR/platform/os/tools/scripts/cmn_funcs
 		#$TOPDIR/platform/os/tools/scripts/init_disks
 		#$TOPDIR/platform/os/tools/diskmgt/list_disks
@@ -1031,8 +1031,8 @@ scd() {
 }
 
 scn() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 
@@ -1043,8 +1043,8 @@ scn() {
 }
 
 srpmc() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
 	(
 		set -o errexit
@@ -1061,15 +1061,15 @@ srpmc() {
 }
 
 SRPMC() {
-	target=$1
+	local target=$1
 
 	srpmc ${target}a && $SSH root@${target}a reboot
 	srpmc ${target}b && $SSH root@${target}b reboot
 }
 
 spm() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 
@@ -1083,14 +1083,14 @@ spm() {
 }
 
 SCN() {
-	target=$1
+	local target=$1
 	scn $target
 	$SSH root@${target} reboot
 }
 
 scix() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
 	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/kernel/drivers/net/ixgbe/
 	$SCP extdrivers/intel/enet/ixgbe-3.11.33/src/ixgbe.ko root@${target}:/lib/modules/$kernel/kernel/drivers/net/ixgbe/
@@ -1099,14 +1099,14 @@ scix() {
 }
 
 SCIX() {
-	target=$1
+	local target=$1
 	scix $target
 	$SSH root@${target} rmmod ixgbe
 	$SSH root@${target} modprobe ixgbe
 }
 
 scnv() {
-	target=$1
+	local target=$1
 
 	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}a:
 	$SCP $TOPDIR/bld_rs/src/prog/nvperf/nvperf root@${target}b:
@@ -1114,7 +1114,7 @@ scnv() {
 }
 
 smir() {
-	target=$1
+	local target=$1
 
 	$SCP $TOPDIR/platform/os/tools/nvram/nvx root@${target}a:/tmp
 	$SCP $TOPDIR/platform/test/nvram/mirtest.sh root@${target}a:/tmp
@@ -1128,8 +1128,8 @@ smir() {
 }
 
 scnvd() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} "/sbin/ifdown bondinternal0"
 	$SSH root@${target} "/sbin/rmmod xyvnic"
@@ -1156,8 +1156,8 @@ scnvd() {
 }
 
 scag() {
-	target=$1
-	kernel=$( $SSH root@${target} uname -r )
+	local target=$1
+	local kernel=$( $SSH root@${target} uname -r )
 
 	$SSH root@${target} iu
 

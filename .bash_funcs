@@ -563,6 +563,7 @@ ff() {
 			extdrivers/xyratex/xybridge/
 			extdrivers/pmc/PMC_Linux_NVMe_Driver_1_0_1
 			extdrivers/diskdump
+			extdrivers/hactl
 			tools/
 			scripts/
 
@@ -726,7 +727,7 @@ upgd() {
 	/auto/e2e/bin/UpgradeTools.py install --branch default $target
 }
 
-upgrade_txos() {
+upg_txos() {
 	local target=$1
 	local rpm=$2
 
@@ -770,10 +771,10 @@ upgt() {
 	local isha=$($SSH root@$target /usr/local/tintri/bin/isha)
 
 	if [[ $isha -eq 0 ]]; then
-		upgrade_txos $target $rpm
+		upg_txos $target $rpm
 	else
-		upgrade_txos ${target}a $rpm
-		upgrade_txos ${target}b $rpm
+		upg_txos ${target}a $rpm
+		upg_txos ${target}b $rpm
 	fi
 }
 

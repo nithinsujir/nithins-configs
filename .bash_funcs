@@ -15,6 +15,13 @@ parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
+gie() {
+	local cur_branch=$(git rev-parse --abbrev-ref HEAD)
+	local dest="$HOME/patches/$cur_branch/$(date +'%b-%d__%H.%M')"
+	mkdir -p $dest
+	git format-patch -s -o $dest/ "$@"
+}
+
 parse_hg_branch() {
     local curdir=`pwd`
 

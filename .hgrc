@@ -20,7 +20,7 @@ crecord = ~/nithins-configs/.hgext/crecord
 
 [pager]
 pager = LESS='FRX' less
-attend = log outgoing diff glog in blog incoming
+attend = log outgoing diff glog in blog incoming annotate
 #ignore = histedit push record commit postreview import pull update merge rebase graft
 
 [merge-patterns]

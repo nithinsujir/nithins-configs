@@ -15,11 +15,26 @@ parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
 }
 
+# parent branch
+gpb() {
+	local cur_branch=$(git rev-parse --abbrev-ref HEAD)
+	git show-branch 2>/dev/null | grep '\*' | grep -v "$cur_branch" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//'
+}
+
+# outgoing changes to parent
+gio() {
+	git log $(gpb)..
+}
+
+# git export outgoing changes
 gie() {
 	local cur_branch=$(git rev-parse --abbrev-ref HEAD)
 	local dest="$HOME/patches/$cur_branch/$(date +'%b-%d__%H.%M')"
+	local parent=$(gpb)
+	local count=$(git log $(gpb).. | grep ^commit | wc -l)
+	echo $count
 	mkdir -p $dest
-	git format-patch -s -o $dest/ "$@"
+	git format-patch -s -o $dest/ -$count
 }
 
 parse_hg_branch() {
@@ -606,7 +621,7 @@ ff() {
 hge() {
 	local rev_start=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | head -n 1`
 	local rev_end=`hg outgoing -r . | grep changeset | awk  {'print $2;'} | sed -s "s/:.*$//" | tail -n 1`
-	local dest=$HOME/patches/$(cur_hg_bookmark)-`date +"%b-%d__%H.%M"`
+	local dest=$HOME/patches/$(cur_hg_bookmark)/`date +"%b-%d__%H.%M"`
 	mkdir -p $dest
 
 	hg export -r $rev_start:$rev_end -o "$dest/%n-%m.patch"

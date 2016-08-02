@@ -9,3 +9,4 @@
 	default = current
 [credential]
 	helper = cache --timeout=999999
+[alias]

@@ -31,7 +31,7 @@ filemerge.executable = kdiff3
 filemerge.args = $base $local $other -o $output
 
 [smtp]
-host = west.exch025.serverdata.net
+host = outlook.office365.com
 port = 587
 username = nsujir@tintri.com
 tls = starttls
@@ -44,6 +44,7 @@ cmd.vd = vim
 opts.vd = -f '+next' '+execute "DirDiff" fnameescape(argv(0)) fnameescape(argv(1))'
 cmd.gvd = gvim
 opts.gvd = -f '+next' '+execute "DirDiff" fnameescape(argv(0)) fnameescape(argv(1))'
+cmd.meld =
 
 
 [tortoisehg]

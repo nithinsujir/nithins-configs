@@ -4,6 +4,7 @@ THREADS=$((CPUS*2))
 SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 IRDEXPLODE=/root/initrd_explode
+KIRDEXPLODE=/root/kinitrd_explode
 BDOM_MNT=/bdom
 
 
@@ -23,7 +24,12 @@ gpb() {
 
 # outgoing changes to parent
 gio() {
-	git log $(gpb)..
+	local parent_branch=$(gpb)
+
+	if [[ -z $parent_branch ]]; then
+		parent_branch="origin"
+	fi
+	git log $parent_branch.. "$@"
 }
 
 # git export outgoing changes
@@ -472,6 +478,24 @@ iu() {
 	cd -
 }
 
+kiu() {
+	if [ -d $KIRDEXPLODE ]
+	then
+		return
+	fi
+
+	mkdir $KIRDEXPLODE
+	cd $KIRDEXPLODE
+
+	gunzip -c /boot/initrd-$(uname -r)kdump.img | cpio -i
+	cd -
+}
+
+KIU() {
+	rm -rf $KIRDEXPLODE
+	kiu
+}
+
 liu() {
 	local initrd=$(ls -1rt ../initrd* | tail -n 1)
 	gunzip -c $initrd | cpio -i
@@ -511,6 +535,19 @@ iz() {
 	INITRD=$( grep initrd $MNT/grub/grub.conf  | /bin/awk -F / {'print $2;'} )
 	find . | cpio -H newc -o | gzip -1 > $MNT/$INITRD
 	umount $MNT
+	sync
+	cd -
+}
+
+kiz() {
+	if [ ! -d $KIRDEXPLODE ]
+	then
+		echo "kdump initrd not exploded"
+		return
+	fi
+
+	cd $KIRDEXPLODE
+	find . | cpio -H newc -o | gzip -1 > /boot/initrd-$(uname -r)kdump.img
 	sync
 	cd -
 }

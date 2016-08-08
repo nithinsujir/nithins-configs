@@ -1,8 +1,8 @@
 #!/bin/bash
 CPUS=$(grep processor /proc/cpuinfo | wc -l)
 THREADS=$((CPUS*2))
-SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
-SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
+export SSH="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
+export SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error"
 IRDEXPLODE=/root/initrd_explode
 KIRDEXPLODE=/root/kinitrd_explode
 BDOM_MNT=/bdom

@@ -30,3 +30,5 @@ os/tools/xybridge/ntbm_test
 os/tools/xybridge/plxreg
 *.o.d
 test/nvram/nvmir
+distro/extpkgs/gdb-*/bfd/doc/bfdver.texi
+os/extdrivers/intel/enet/e1000e-2.5.4/src/e1000e.7.gz

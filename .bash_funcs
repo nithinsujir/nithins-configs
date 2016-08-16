@@ -449,6 +449,11 @@ mbd() {
 	mkdir -p $BDOM_MNT
 
 	boot_dom=$(/usr/local/tintri/bin/list_disks -i)
+	# On ttvm, list_disks -i will fail
+	if [[ -z $boot_dom ]]; then
+		boot_dom=/dev/sda
+	fi
+
 	mount ${boot_dom}1 $BDOM_MNT
 }
 
@@ -1175,8 +1180,8 @@ scnvd() {
 	local target=$1
 	local kernel=$( $SSH root@${target} uname -r )
 
-	$SSH root@${target} "/sbin/ifdown bondinternal0"
-	$SSH root@${target} "/sbin/rmmod xyvnic"
+	#$SSH root@${target} "/sbin/ifdown bondinternal0"
+	#$SSH root@${target} "/sbin/rmmod xyvnic"
 	$SSH root@${target} iu
 
 	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
@@ -1192,8 +1197,8 @@ scnvd() {
 	$SCP extdrivers/xyratex/xybridge/trunk/source/xybridge/xybridge.ko root@${target}:/lib/modules/$kernel/extra/xybridge/
 	$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:/lib/modules/$kernel/extra/
 
-	$SSH root@${target} "/sbin/modprobe xyvnic"
-	$SSH root@${target} "/sbin/ifup bondinternal0"
+	#$SSH root@${target} "/sbin/modprobe xyvnic"
+	#$SSH root@${target} "/sbin/ifup bondinternal0"
 
 	$SSH root@${target} iz
 	$SSH root@${target} sync
@@ -1235,3 +1240,15 @@ scin() {
 	$SSH root@${target} sync
 }
 
+REINS() {
+	local target=$1
+
+	$SSH root@${target} mbd
+	$SSH root@${target} mkdir -p $BDOM_MNT/reinstall
+	$SSH root@${target} touch $BDOM_MNT/reinstall/$(date +%F)
+	$SSH root@${target} touch $BDOM_MNT/reinstall/$(date +%b%a%j)
+	$SSH root@${target} "echo devpassword=tintri99 > $BDOM_MNT/reinstall/cmdline"
+
+	$SSH root@${target} ubd
+	$SSH root@${target} sync
+}

@@ -264,9 +264,9 @@ FS() {
 	cid=$(hg identify --num)
 	ls $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/filesystem_core*$cid*.rpm
 	if [[ $? -ne 0 ]]; then
-		scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree
+		scons BUILDDIR=$TOPDIR/bld_rs BUILDTYPE=release tree "$@"
 		cd $TOPDIR/bld_rs
-		scons -j $THREADS
+		scons -j $THREADS src
 		rc=$?
 	else
 		echo "FS already built"
@@ -309,7 +309,8 @@ RMS() {
 
 MK() {
 	RMS
-	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel -B $TOPDIR/plat-os/fedora12/ -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools -s -E vmlinux -E realstore -E PlatCmd -E HAMon -E nvx -E pmc -E PlatMon -E list_disks -E boot_fsck "$@"
+	sudo TOPDIR=$TOPDIR $TOPDIR/platform/distro/tools/mkrel -b $TOPDIR -r $TOPDIR/bld_rs -u $TOPDIR/ui -g -J -e devtools -s -E vmlinux -E realstore -E PlatCmd -E HAMon -E nvx -E pmc -E PlatMon -E list_disks -E boot_fsck "$@"
+	# -B $TOPDIR/plat-os/fedora12/ 
 }
 
 B() {
@@ -334,11 +335,20 @@ UI() {
 	cid=$(hg identify --num)
 	ls $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/ui_core*$cid*.rpm
 	if [[ $? -ne 0 ]]; then
-		./antbuild clean
-		./antbuild smis-clean
-		rm -rf hyper-v/smis/pegasus_tmp
-		hg purge hyper-v/
-		hg revert hyper-v/
+		local branch=$(hg branch)
+		local lastcleaned=$(cat $TOPDIR/.last)
+
+		echo "$lastcleaned $branch"
+
+		if [[ $lastcleaned != $branch ]]; then
+			./antbuild clean
+			./antbuild smis-clean
+			rm -rf hyper-v/smis/pegasus_tmp
+			hg purge hyper-v/
+			hg revert hyper-v/
+			echo $(hg branch) > $TOPDIR/.last
+		fi
+
 		./antbuild
 		rc=$?
 	else
@@ -603,7 +613,7 @@ ff() {
 			../distro/initrd_overlay
 			../distro/tools
 			../distro/spec
-			extdrivers/lsi/mpt3sas-4.00.00.00/mpt3sas
+			extdrivers/lsi/mpt3sas-13.255.01.00/mpt3sas/
 			extdrivers/intel/enet/ixgbe-3.11.33/src
 			extdrivers/nvx
 			extdrivers/agiga/madura-1.0/
@@ -821,8 +831,9 @@ upgt() {
 	if [[ $isha -eq 0 ]]; then
 		upg_txos $target $rpm
 	else
-		upg_txos ${target}a $rpm
+		upg_txos ${target}a $rpm &
 		upg_txos ${target}b $rpm
+		wait
 	fi
 }
 
@@ -1182,13 +1193,13 @@ scnvd() {
 
 	#$SSH root@${target} "/sbin/ifdown bondinternal0"
 	#$SSH root@${target} "/sbin/rmmod xyvnic"
-	$SSH root@${target} iu
+	#$SSH root@${target} iu
 
-	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
-	$SCP extdrivers/xyratex/xybridge/trunk/source/xyvnic/xyvnic.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xyvnic
-	$SCP extdrivers/xyratex/xybridge/trunk/source/xymir/ntb_mir.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xymir/
-	$SCP extdrivers/xyratex/xybridge/trunk/source/xybridge/xybridge.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xybridge/
-	$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+	#$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
+	#$SCP extdrivers/xyratex/xybridge/trunk/source/xyvnic/xyvnic.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xyvnic
+	#$SCP extdrivers/xyratex/xybridge/trunk/source/xymir/ntb_mir.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xymir/
+	#$SCP extdrivers/xyratex/xybridge/trunk/source/xybridge/xybridge.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/xybridge/
+	#$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:$IRDEXPLODE/lib/modules/$kernel/extra/
 
 
 	$SCP extdrivers/agiga/madura-1.0/driver/agigaram.ko root@${target}:/lib/modules/$kernel/extra/
@@ -1197,10 +1208,10 @@ scnvd() {
 	$SCP extdrivers/xyratex/xybridge/trunk/source/xybridge/xybridge.ko root@${target}:/lib/modules/$kernel/extra/xybridge/
 	$SCP extdrivers/agiga/nvdimm_mir/nvdimm_mir.ko root@${target}:/lib/modules/$kernel/extra/
 
-	#$SSH root@${target} "/sbin/modprobe xyvnic"
-	#$SSH root@${target} "/sbin/ifup bondinternal0"
+	$SSH root@${target} "service xybridge restart"
+	$SSH root@${target} "/sbin/ifup bondinternal0"
 
-	$SSH root@${target} iz
+	#$SSH root@${target} iz
 	$SSH root@${target} sync
 }
 

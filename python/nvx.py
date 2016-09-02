@@ -27,6 +27,7 @@ def dump(size):
     f.write(mm.read(size))
     f.close()
 
+NVSIZE = 99
 dump(NVSIZE)
 
 

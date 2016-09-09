@@ -1,4 +1,7 @@
 #!/usr/bin/expect
+# Sets up the ssh public key on a target for auto login.
+# ssh-keygen must have been called already to create the ssh keys.
+# Copy this script into your path
 
 set arg1 [lindex $argv 0]
 set multi_prompt {[#>$] }

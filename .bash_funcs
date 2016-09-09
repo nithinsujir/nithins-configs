@@ -819,16 +819,17 @@ upg_txos() {
 
 upgt() {
 	if [[ -z $1 || -z $2 ]]; then
-		echo "upgt <target> <rpm>"
+		echo "upgt <target> <rpm> [<single>]"
 		return 1
 	fi
 
 	local target=$1
 	local rpm=$(basename $2)
+	local single=$3
 
 	local isha=$($SSH root@$target /usr/local/tintri/bin/isha)
 
-	if [[ $isha -eq 0 ]]; then
+	if [[ $isha -eq 0 || $single == "single" ]]; then
 		upg_txos $target $rpm
 	else
 		upg_txos ${target}a $rpm &

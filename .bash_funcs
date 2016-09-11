@@ -87,7 +87,7 @@ parse_hg_bookmark() {
 hgm() {
 	hg paths | grep -q tintri
 
-	local BR=`hg branch`
+	local BR=(hg branch)
 
 	if [ $BR == "default" ]
 	then
@@ -316,10 +316,13 @@ MK() {
 B() {
 	pushd $TOPDIR/platform/os > /dev/null
 
-	BP
-	BE
-	RMS
-	MK "$@"
+	(
+		set -o errexit
+		BP
+		BE
+		RMS
+		MK "$@"
+	)
 
 	popd > /dev/null
 }
@@ -380,8 +383,12 @@ BFP() {
 }
 
 BPE() {
-	BP
-	BE
+	(
+		set -o errexit
+
+		BP
+		BE
+	)
 }
 
 BT() {
@@ -866,6 +873,7 @@ bb() {
 	popd > /dev/null
 }
 
+# Build extdrivers
 be() {
 	local rc
 	pushd $TOPDIR/platform/os/extdrivers > /dev/null
@@ -886,6 +894,7 @@ bi() {
 	./build.sh install
 }
 
+# Build tools
 bt() {
 	pushd $TOPDIR/platform/os/tools > /dev/null
 	./build.sh build -j $THREADS
@@ -1050,6 +1059,8 @@ scs() {
 	$SSH root@${target} sync
 }
 
+# Update custom vmlinuz on a system.
+# NOTE: You have to ensure that it matches the vermagic of modules
 scv() {
 	local target=$1
 	$SCP $TOPDIR/kbuild/install.d/vmlinuz root@${target}:/boot

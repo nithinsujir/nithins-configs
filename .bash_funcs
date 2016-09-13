@@ -1274,3 +1274,15 @@ REINS() {
 	$SSH root@${target} ubd
 	$SSH root@${target} sync
 }
+
+# Generate ssh keys and setup auto login on target
+tsa() {
+	local target=$1
+
+	if [[ ! -e $HOME/.ssh/id_rsa.pub ]]; then
+		ssh-keygen -f $HOME/.ssh/id_rsa -N ''
+	fi
+
+	tsa.exp $target
+}
+

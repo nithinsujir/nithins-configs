@@ -19,7 +19,7 @@ parse_git_branch() {
 # parent branch
 gpb() {
 	local cur_branch=$(git rev-parse --abbrev-ref HEAD)
-	git show-branch 2>/dev/null | grep '\*' | grep -v "$cur_branch" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//'
+	git show-branch --list | grep -A 1 $cur_branch | tail -n 1 | grep -Po '(?<=\[).*(?=\])'
 }
 
 # outgoing changes to parent
@@ -38,7 +38,6 @@ gie() {
 	local dest="$HOME/patches/$cur_branch/$(date +'%b-%d__%H.%M')"
 	local parent=$(gpb)
 	local count=$(git log $(gpb).. | grep ^commit | wc -l)
-	echo $count
 	mkdir -p $dest
 	git format-patch -s -o $dest/ -$count
 }

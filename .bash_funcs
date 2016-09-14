@@ -812,6 +812,7 @@ upg_txos() {
 	echo "Stopping services"
 	$SSH root@${target} "/sbin/service postgresql-perf stop"
 	$SSH root@${target} "/sbin/service txos stop"
+	$SSH root@${target} "/bin/umount /sysroot"
 
 	echo "Starting upgrade_txos on $target"
 	$SSH root@${target} "/usr/local/tintri/bin/upgrade_txos -f -F -v -r /var/releases/upload/$rpm"

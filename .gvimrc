@@ -234,6 +234,7 @@ inoremap <M-Space> <C-c>a<Space>
 
 vnoremap <M-j> <Esc>
 vnoremap <M-c> d<Esc>i#if 0<C-m>#endif<C-m><Esc>kkp
+vnoremap <M-f> d<Esc>i#ifdef CONFIG_TINTRI<C-m>#endif<C-m><Esc>kkp
 vnoremap <M-d> %dd''dd
 vnoremap fj <Esc>
 

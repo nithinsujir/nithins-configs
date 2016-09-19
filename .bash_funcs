@@ -128,9 +128,9 @@ hgp() {
 		popd > /dev/null
 	done
 
-	pushd $TOPDIR/plat-os
-	hg tupdate
-	popd > /dev/null
+	#pushd $TOPDIR/plat-os
+	#hg tupdate
+	#popd > /dev/null
 }
 
 hgt() {
@@ -637,6 +637,18 @@ ff() {
 			src/prog/*
 			src/lib/*
 			src/interface/*
+		)
+	elif [[ $repo == "kernel" ]]; then
+		dirs=(
+			arch/x86/boot
+			arch/x86/kernel
+			drivers/char/ipmi
+			drivers/net/ethernet/intel
+			drivers/scsi/mpt3sas
+			include/tintri
+			kernel
+			mm
+			net/core
 		)
 	else
 		dirs=( . )

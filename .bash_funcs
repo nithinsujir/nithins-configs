@@ -857,6 +857,19 @@ upgt() {
 	fi
 }
 
+upgtl() {
+	local target=$1
+	local rpm=$(ls -1rt $TOPDIR/distro_bld/local_rpms/RPMS/x86_64/txos-*.rpm)
+	local single=$2
+
+	if [[ -z $1 ]]; then
+		echo "upgtl <target> [<single>]"
+		return 1
+	fi
+
+	upgt "$target" "$rpm" "$single"
+}
+
 updb() {
 	local target=$1
 	/auto/e2e/bin/UpgradeTools.py populatedb $target

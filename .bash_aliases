@@ -222,13 +222,13 @@ alias upgl='cd; /auto/e2e/bin/UpgradeTools.py install --rpmpath `readlink latest
 alias upglu='cd; /auto/e2e/bin/UpgradeTools.py upgrade --rpmpath `readlink latest` '
 
 # Tintri Build
-alias ws='export TOPDIR=/data/workspaces/build0; cd $TOPDIR/platform/os'
-alias ws1='export TOPDIR=/data3/workspaces/build1; cd $TOPDIR/platform/os'
-alias ws2='export TOPDIR=/data2/workspaces/build2; cd $TOPDIR/platform/os'
-alias ws3='export TOPDIR=/data2/workspaces/build3; cd $TOPDIR/platform/os'
-alias ws4='export TOPDIR=/data3/workspaces/build4; cd $TOPDIR/platform/os'
-alias ws5='export TOPDIR=/data3/workspaces/build5; cd $TOPDIR/platform/os'
-alias ws6='export TOPDIR=/data3/workspaces/build6; cd $TOPDIR/platform/os'
+alias ws='export TOPDIR=/data/workspaces/build0; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
+alias ws1='export TOPDIR=/data3/workspaces/build1; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
+alias ws2='export TOPDIR=/data2/workspaces/build2; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
+alias ws3='export TOPDIR=/data2/workspaces/build3; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
+alias ws4='export TOPDIR=/data3/workspaces/build4; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
+alias ws5='export TOPDIR=/data3/workspaces/build5; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
+alias ws6='export TOPDIR=/data3/workspaces/build6; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
 
 alias ix='cd $TOPDIR/platform/os/extdrivers/intel/enet/ixgbe-3.11.33/src'
 alias os='cd $TOPDIR/platform/os'

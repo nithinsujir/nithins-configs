@@ -9,25 +9,5 @@
 	default = current
 [credential]
 	helper = cache --timeout=999999
-[remote "backup"]
-        url = git@gitlab.tintri.com:backup/testrb.git
-	# We want to push (specific commits, typically HEAD) to the backup repo.
-        # And one might want to fetch a specific commit back out of remote backup.
-        # But we don't want to fetch everything that host has by default
-        # SO DO NOT INCLUDE THIS: fetch = refs/tags/*:refs/remotes/backup/tags/*
-[alias]
-        # Push commit (in Hg, "changeset") to "backup" repository as a tag.
-        # (The remote named "backup" is already configured above.)
-        #
-        # The unique name of the tag contains the full hash of the commit.
-        # The tag name is prefixed with BU (for "backup", duh) to avoid a
-        # special warning message in git, in case a tag is named with a 40-hex
-        # by accident. That warning can be disabled with
-        #       git config advice.objectNameWarning false
-        # but avoiding the issue means we could still have git's helpful warning
-        # if we ever made the kind of mistake it is watching for.
-        backup = "!_f(){ cset=${1:-HEAD} tagname=BU$(git rev-parse --verify $cset) ;          git push backup           $cset:refs/tags/$tagname;} ; _f"
-        # "dry-run backup" shows what backup would do, without actually doing
-it
-        drbu   = "!_f(){ cset=${1:-HEAD} tagname=BU$(git rev-parse --verify $cset) ; set -x ; git push backup --dry-run $cset:refs/tags/$tagname;} ; _f"
-
+[include]
+	path = /auto/hg/git/config

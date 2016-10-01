@@ -231,12 +231,12 @@ alias ws5='export TOPDIR=/data3/workspaces/build5; . $TOPDIR/platform/misc/scrip
 alias ws6='export TOPDIR=/data3/workspaces/build6; . $TOPDIR/platform/misc/scripts/devel_funcs; cd $TOPDIR/platform/os'
 
 alias ix='cd $TOPDIR/platform/os/extdrivers/intel/enet/ixgbe-3.11.33/src'
-alias os='cd $TOPDIR/platform/os'
-alias fs='cd $TOPDIR/fs'
-alias ui='cd $TOPDIR/ui'
-alias oi='cd $TOPDIR/oneui'
-alias ke='cd $TOPDIR/kernel'
-alias pk='cd $TOPDIR/plat-os/fedora12'
+alias os='cd $TOPDIR/platform/os; . $TOPDIR/platform/misc/scripts/devel_funcs'
+alias fs='cd $TOPDIR/fs; . $TOPDIR/platform/misc/scripts/devel_funcs'
+alias ui='cd $TOPDIR/ui; . $TOPDIR/platform/misc/scripts/devel_funcs'
+alias oi='cd $TOPDIR/oneui; . $TOPDIR/platform/misc/scripts/devel_funcs'
+alias ke='cd $TOPDIR/kernel; . $TOPDIR/platform/misc/scripts/devel_funcs'
+alias pk='cd $TOPDIR/plat-os/fedora12; . $TOPDIR/platform/misc/scripts/devel_funcs'
 
 alias MD='mount /data; mount /data2; mount /data3'
 alias UD='umount /data; umount /data2; umount /data3'

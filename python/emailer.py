@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import smtplib
 import os
 import optparse
@@ -6,7 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-SERVER = 'mail.broadcom.com'
+SERVER = 'smtp.tintri.com'
 
 class Emailer:
     def __init__(self, recepients, sender):
@@ -60,8 +61,8 @@ class Emailer:
         rval = session.sendmail(self.sender, self.recepients, msg.as_string())
         
 if __name__ == "__main__":
-    em = Emailer('nithinsujir@gmail.com', 'nithinsujir@gmail.com')
-    #em = Emailer('nsujir@broadcom.com', 'nsujir@broadcom.com')
+    #em = Emailer('nithinsujir@gmail.com', 'nithinsujir@gmail.com')
+    em = Emailer('nsujir@tintri.com', 'nsujir@tintri.com')
     subj = 'Test Mail'
     body = 'Mail Body'
 

@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+
+# period  delay	 job-identifier  command
+1         0      bbak            /home/nsujir/borgbak.sh

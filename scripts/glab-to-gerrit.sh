@@ -1,13 +1,20 @@
 #!/bin/bash
 GIT=/usr/local/bin/git
-BRANCHES=( default-4.4 )
-GERRIT_CLONE=/data/gerrit/gerrit-kernel
+REPOS=( gerrit-kernel gerrit-utils )
+declare -A BRANCHES=( \
+	['gerrit-kernel']='default-4.4 '\
+	['gerrit-utils']='master')
+CLONE_DIR=/data/gerrit/
 
-cd $GERRIT_CLONE
-for branch in ${BRANCHES[@]}; do
-	echo "Sync $branch"
-	$GIT checkout $branch
-	$GIT pull gitlab $branch
-	$GIT push
+for repo in ${REPOS[@]}; do
+	cd $CLONE_DIR/$repo
+
+	branches=("${BRANCHES[$repo]}")
+	for branch in ${branches[@]}; do
+		echo "Sync $repo:$branch"
+		$GIT checkout $branch
+		$GIT pull gitlab $branch
+		$GIT push
+	done
 done
 

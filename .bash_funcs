@@ -282,7 +282,7 @@ ff() {
 			extdrivers/hactl
 			tools/
 			scripts/
-
+			linux-2.6.32.10/block
 		)
 	elif [[ $repo == "fs" ]] ; then
 		dirs=(

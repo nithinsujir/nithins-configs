@@ -224,10 +224,10 @@ inoremap <Tab> <C-p>
 
 "inoremap fdb<Space> FCM_LOG_DBG("== [%s]: ", p->ifname);<Esc>13hi
 "inoremap ner<Space> netdev_err(tp->dev, "== [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
-inoremap psf<Space> printf("== [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
+inoremap psf<Space> printf("@@ [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
 inoremap prk<Space> printk(KERN_ERR "
-inoremap psk<Space> printk(KERN_ERR "== [%s:%d]\n", __func__, __LINE__);<Esc>24hi
-inoremap psl<Space> printk_ratelimited(KERN_ERR "== [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
+inoremap psk<Space> printk(KERN_ERR "@@ [%s:%d]\n", __func__, __LINE__);<Esc>24hi
+inoremap psl<Space> printk_ratelimited(KERN_ERR "@@ [%s@%s:%d]\n", __func__, __FILE__, __LINE__);<Esc>34hi
 
 
 inoremap <M-Space> <C-c>a<Space>

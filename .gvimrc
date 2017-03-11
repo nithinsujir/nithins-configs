@@ -11,7 +11,7 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'L9'
 "Plugin 'FuzzyFinder'
-Plugin 'DirDiff'
+Plugin 'will133/vim-dirdiff'
 Plugin 'EasyMotion'
 Plugin 'QFixToggle'
 Plugin 'wincent/command-t'

@@ -1,1 +1,23 @@
-git vim-gtk expect mrxvt zim mercurial tudu meld openssh-server default-jre icedtea-netx ctags cscope openssh-server kmousetool kupfer pidgin rdesktop source-highlight shellcheck evince sshfs cifs-utils sshpass aria2 gnome-terminal gcc borgbackup speedcrunch ipmitool
+git
+vim-gtk
+expect
+mrxvt
+mercurial
+tudu
+meld
+default-jre
+icedtea-netx
+ctags
+cscope
+openssh-server
+rdesktop
+source-highlight
+shellcheck
+sshfs
+cifs-utils
+sshpass
+aria2
+gcc
+borgbackup
+speedcrunch
+ipmitool

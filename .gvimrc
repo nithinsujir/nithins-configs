@@ -1,3 +1,25 @@
+set nocompatible
+filetype off
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'L9'
+"Plugin 'FuzzyFinder'
+Plugin 'DirDiff'
+Plugin 'EasyMotion'
+Plugin 'QFixToggle'
+Plugin 'wincent/command-t'
+
+
+call vundle#end()            " required
+filetype plugin indent on    " required
+
 behave mswin
 syntax on
 
@@ -53,7 +75,6 @@ set gdefault
 set hlsearch
 set ignorecase
 set incsearch
-set nocompatible
 set noeol
 set nu
 set ruler
@@ -94,7 +115,8 @@ let g:locateopen_ignorecase = 1
 
 "Alphabet Alt Mappings
 noremap <M-a> :!cscope -bv<CR>:cs r<CR><CR>
-noremap <M-b> :FufBuffer<C-m>
+"noremap <M-b> :FufBuffer<C-m>
+noremap <M-b> :CommandTBuffer<CR>
 noremap <M-c> I/*<Esc>A*/<Esc>
 noremap <M-d> ^xx$xx
 noremap <M-e> :cs find e 
@@ -148,7 +170,8 @@ noremap <M-Space> <C-u>
 "Alphabet Ctrl Mappings
 noremap <C-d> :bd<C-m>
 "noremap <C-f> :FF<C-m><C-x><C-o>
-noremap <C-f> :FufCoverageFileRegister<CR>.fufcache/*<CR><Esc>f<CR>:FufCoverageFileChange f<CR>
+"noremap <C-f> :FufCoverageFileRegister<CR>.fufcache/*<CR><Esc>f<CR>:FufCoverageFileChange f<CR>
+noremap <C-f> :CommandT<CR>
 noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k

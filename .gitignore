@@ -48,3 +48,4 @@ rmins.sh
 *.drjava
 .netrwhist
 fuf.files
+.vim/bundle

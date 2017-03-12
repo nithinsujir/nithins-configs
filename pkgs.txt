@@ -21,3 +21,5 @@ gcc
 borgbackup
 speedcrunch
 ipmitool
+htop
+dos2unix

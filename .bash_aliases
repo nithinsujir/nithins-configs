@@ -181,6 +181,7 @@ alias vlm='sudo tail -f /var/log/messages'
 alias vn='vncserver -geometry 1900x1000'
 alias xr='xrandr --output DP-2 --right-of DP-1'
 alias xv='xvncviewer -noraiseonbeep'
+alias yw='yum whatprovides'
 alias zi='zenity --info'
 
 # P4 aliases

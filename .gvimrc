@@ -294,6 +294,7 @@ highlight SpcTab ctermbg=LightBlue ctermfg=white guibg=LightBlue guifg=white
 highlight OverLength ctermbg=Red ctermfg=white guibg=Red guifg=white
 
 autocmd BufWinEnter,BufCreate,BufRead *.c,*.h match SpcTab / \+	/
+autocmd BufRead,BufNewFile *.c set ts=8 shiftwidth=8 softtabstop=8 noexpandtab
 
 if version >= 703
 	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h highlight colorcolumn ctermbg=LightCyan guibg=LightCyan ctermfg=Black guifg=Purple
@@ -324,6 +325,9 @@ autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%81v.*/
 autocmd BufWinEnter,BufCreate,BufRead RELEASE.TXT set expandtab
 autocmd BufWinEnter,BufCreate,BufRead ChangeLog set expandtab
 
+autocmd BufRead,BufNewFile tools/scripts/* set ts=4 shiftwidth=4 softtabstop=4
+autocmd BufRead,BufNewFile scripts/tools/* set ts=4 shiftwidth=4 softtabstop=4
+autocmd BufRead,BufNewFile scripts/common/* set ts=4 shiftwidth=4 softtabstop=4
 
 " ==============================================================================
 " Save windows size/position

@@ -59,3 +59,8 @@ interface = raw
 
 [diff]
 git = True
+
+[trusted]
+users = nsujir,root
+groups = nsujir,rpmbuild
+

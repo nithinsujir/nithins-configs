@@ -11,3 +11,7 @@
 	helper = cache --timeout=999999
 [include]
 	path = /auto/hg/git/config
+[sendemail]
+	smtpserver=outlook.office365.com
+	smtpencryption=tls
+	smtpuser=nsujir@tintri.com

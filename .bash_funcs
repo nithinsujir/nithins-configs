@@ -490,7 +490,9 @@ bec() {
 }
 
 bi() {
+	pushd $TOPDIR/platform/os > /dev/null
 	./build.sh install
+	popd > /dev/null
 }
 
 hgd() {
@@ -838,3 +840,17 @@ tsa() {
 	tsa.exp $target
 }
 
+# docker: execute a command in a container
+# dex <container> <cmd>
+dex(){
+	local cont=$1
+	shift
+	local args="$@"
+	docker exec -u `id -u $USER`:`id -g $USER` -it $cont bash -c "cd `pwd`;$args"
+}
+
+# docker: start a new shell to a container
+dsh() {
+	local cont=txcon-${1:-cen68}
+	dex $cont "/bin/bash"
+}

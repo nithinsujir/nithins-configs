@@ -854,3 +854,9 @@ dsh() {
 	local cont=txcon-${1:-cen68}
 	dex $cont "/bin/bash"
 }
+
+# docker: attach to a shell in a container
+dat() {
+	local cont=txcon-${1:-cen68}
+	docker attach $cont
+}

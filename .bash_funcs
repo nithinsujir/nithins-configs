@@ -210,15 +210,15 @@ BRC() {
 }
 
 isol() {
-	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi -L OPERATOR sol activate
+	ipmitool -I lanplus -U admin -P password -H $1-ipmi -L OPERATOR sol activate
 }
 
 isel() {
-	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi sel list
+	ipmitool -I lanplus -U admin -P password -H $1-ipmi sel list
 }
 
 isold() {
-	ipmitool -I lanplus -U admin -P tintri99 -H $1-ipmi -L OPERATOR sol deactivate
+	ipmitool -I lanplus -U admin -P password -H $1-ipmi -L OPERATOR sol deactivate
 }
 
 xsol() {
@@ -823,7 +823,7 @@ REINS() {
 	$SSH root@${target} mkdir -p $BDOM_MNT/reinstall
 	$SSH root@${target} touch $BDOM_MNT/reinstall/$(date +%F)
 	$SSH root@${target} touch $BDOM_MNT/reinstall/$(date +%b%a%j)
-	$SSH root@${target} "echo devpassword=tintri99 > $BDOM_MNT/reinstall/cmdline"
+	$SSH root@${target} "echo devpassword=password > $BDOM_MNT/reinstall/cmdline"
 
 	$SSH root@${target} ubd
 	$SSH root@${target} sync

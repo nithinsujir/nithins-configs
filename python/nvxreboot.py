@@ -19,7 +19,7 @@ if len(sys.argv) < 2:
 
 server = sys.argv[1]
 
-password = 'tintri99'
+password = 'password'
 if len(sys.argv) > 2:
 	password = sys.argv[2]
 

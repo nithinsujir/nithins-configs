@@ -79,7 +79,7 @@ default txos
 LABEL txos
         MENU LABEL $install_ver trunk (tty console)
         KERNEL images/txos/$install_ver/vmlinuz
-        APPEND initrd=images/txos/$install_ver/initrd verbose NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder devinstall nowdog ipaddr=${ipaddr} netmask=255.255.0.0 gateway=10.40.0.1 devpassword=tintri99 installvers=$rel nosec
+        APPEND initrd=images/txos/$install_ver/initrd verbose NukeInstall rootpart=1 stable=1 md_uuid=placeholder dev_uuid=placeholder devinstall nowdog ipaddr=${ipaddr} netmask=255.255.0.0 gateway=10.40.0.1 devpassword=password installvers=$rel nosec
 	
 	EOF
 }

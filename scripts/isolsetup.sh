@@ -17,7 +17,7 @@ ipmitool lan set 1 vlan id off
 ipmitool lan set 1 access on
 # This next one seems to fail if user is already named admin.
 ipmitool user set name 3 admin
-ipmitool user set password 3 tintri99
+ipmitool user set password 3 password
 # privilege 3 = operator level
 ipmitool user priv 3 4 1
 ipmitool user enable 3

@@ -6,10 +6,14 @@
 set arg1 [lindex $argv 0]
 set multi_prompt {[#>$] }
 
+set filp [open $env(HOME)/.pass r]
+set pass [read $filp]
+close $filp
+
 spawn /usr/bin/scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error $env(HOME)/.ssh/id_rsa.pub root@$arg1:/tmp
 expect {
 	"password:" {
-		send -- "password\n"
+		send -- "$pass\n"
 		expect -re $multi_prompt
 	}
 
@@ -22,7 +26,7 @@ expect {
 spawn /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o loglevel=error root@$arg1
 expect "password:"
 
-send -- "password\n"
+send -- "$pass\n"
 expect -re $multi_prompt
 
 send -- "cat /tmp/id_rsa.pub >> /root/.ssh/authorized_keys\n"

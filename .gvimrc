@@ -15,6 +15,7 @@ Plugin 'will133/vim-dirdiff'
 Plugin 'EasyMotion'
 Plugin 'QFixToggle'
 Plugin 'wincent/command-t'
+Plugin 'fatih/vim-go'
 
 
 call vundle#end()            " required
@@ -42,6 +43,7 @@ abbreviate i1 int16
 abbreviate i3 int32
 abbreviate inl inline
 abbreviate lo long
+abbreviate na namespace
 abbreviate ret return
 abbreviate reg register
 abbreviate si sizeof
@@ -54,6 +56,7 @@ abbreviate ui unsigned int
 abbreviate ul unsigned long
 abbreviate u3 u32
 abbreviate u4 u64
+abbreviate us using
 abbreviate vo volatile
 abbreviate wh while
 
@@ -264,7 +267,7 @@ vnoremap fj <Esc>
 "set guifont=7x14
 "set guifont=Monospace\ 10
 "set guifont=Liberation\ Mono\ 9.4
-set guifont=Liberation\ Mono\ 11
+set guifont=Inconsolata\ 13
 
 runtime ftplugin/man.vim
 

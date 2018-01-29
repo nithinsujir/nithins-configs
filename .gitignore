@@ -49,3 +49,5 @@ rmins.sh
 .netrwhist
 fuf.files
 .vim/bundle
+a.out
+*~

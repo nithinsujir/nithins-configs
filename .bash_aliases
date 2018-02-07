@@ -240,3 +240,25 @@ alias ui='cd $TOPDIR/ui; . $TOPDIR/platform/misc/scripts/devel_funcs; . $HOME/.b
 alias oi='cd $TOPDIR/oneui; . $TOPDIR/platform/misc/scripts/devel_funcs; . $HOME/.bf'
 alias ke='cd $TOPDIR/kernel; . $TOPDIR/platform/misc/scripts/devel_funcs; . $HOME/.bf'
 alias pk='cd $TOPDIR/plat-os/fedora12; . $TOPDIR/platform/misc/scripts/devel_funcs; . $HOME/.bf'
+
+alias fs1='ws1; fs'
+alias fs2='ws2; fs'
+alias fs3='ws3; fs'
+alias fs4='ws4; fs'
+alias fs5='ws5; fs'
+alias fs6='ws6; fs'
+
+alias ui1='ws1; ui'
+alias ui2='ws2; ui'
+alias ui3='ws3; ui'
+alias ui4='ws4; ui'
+alias ui5='ws5; ui'
+alias ui6='ws6; ui'
+
+alias ke1='ws1; ke'
+alias ke2='ws2; ke'
+alias ke3='ws3; ke'
+alias ke4='ws4; ke'
+alias ke5='ws5; ke'
+alias ke6='ws6; ke'
+

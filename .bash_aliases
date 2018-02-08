@@ -262,3 +262,10 @@ alias ke4='ws4; ke'
 alias ke5='ws5; ke'
 alias ke6='ws6; ke'
 
+alias os1='ws1; os'
+alias os2='ws2; os'
+alias os3='ws3; os'
+alias os4='ws4; os'
+alias os5='ws5; os'
+alias os6='ws6; os'
+

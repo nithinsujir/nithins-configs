@@ -24,7 +24,6 @@ alias eg="export P4DIFF='gvimdiff -f'"
 alias elm='echo "================================= `date` =============================" >> /var/log/messages'
 alias ep="export P4DIFF='diff -bru'"
 alias f='sudo find . -iname'
-alias g4='bash ~/bin/p4.sh'
 alias gar='git am --reject'
 alias gcp='git cherry-pick'
 alias gd='gitvimdiff'

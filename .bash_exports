@@ -1,17 +1,5 @@
 # Source directory paths
-export dne=drivers/net/ethernet
 export esn=/etc/sysconfig/network-scripts
-export ixg=extdrivers/intel/enet/ixgbe-3.11.33/src
-export usp=/usr/src/packages
-export tm=/tftpboot/pxelinux.cfg/txos.menu
-export tn=/tftpboot/pxelinux.cfg/nsujir.menu
-export tin=/tftpboot/images/txos/nsujir
-export tit=/tftpboot/images/txos/
-export naeb=/net/auto-distrobld-archive/exports/build/
-export dtx=/net/auto-distrobld-archive/exports/savedrpms/default/txos/
-export agd=extdrivers/agiga/madura-1.0/driver/
-export xyb=extdrivers/xyratex/xybridge/trunk/source/xybridge/
-export xyv=extdrivers/xyratex/xybridge/trunk/source/xyvnic/
 
 export PATH=.:/usr/local/sbin:/usr/bin/:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
 #export P4PORT=pf-irva-ecs.broadcom.com:1666
@@ -30,12 +18,12 @@ export VISUAL=vim
 #export LANG=en_US
 #export LC_CTYPE=en_US
 
-export CCACHE_LOGFILE=/tmp/ccache.log
-export CCACHE_DIR=/data/ccache
+#export CCACHE_LOGFILE=/tmp/ccache.log
+#export CCACHE_DIR=/data/ccache
 
 #export XAUTHORITY=~/.Xauthority
 
-export TOPDIR=/data/workspaces/build0
+#export TOPDIR=/data/workspaces/build0
 
 # coloring for less
 export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"

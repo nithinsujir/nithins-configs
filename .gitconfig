@@ -1,6 +1,6 @@
 [user]
 	name = Nithin Nayak Sujir
-	email = nsujir@tintri.com
+	email = nsujir@google.com
 [color]
 	ui = auto
 [core]
@@ -15,3 +15,5 @@
 	smtpserver=outlook.office365.com
 	smtpencryption=tls
 	smtpuser=nsujir@tintri.com
+[url "git@github.com:"]
+	insteadOf = https://github.com/

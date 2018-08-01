@@ -1,7 +1,7 @@
 # Source directory paths
 export esn=/etc/sysconfig/network-scripts
 
-export PATH=.:/usr/local/sbin:/usr/bin/:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
+#export PATH=.:/usr/local/sbin:/usr/bin/:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
 #export P4PORT=pf-irva-ecs.broadcom.com:1666
 #export P4PORT=10.220.0.62:1667
 #export P4USER=nsujir

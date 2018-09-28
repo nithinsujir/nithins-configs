@@ -16,7 +16,7 @@ mq =
 histedit =
 progress =
 record =
-crecord = ~/nithins-configs/.hgext/crecord
+#crecord = ~/nithins-configs/.hgext/crecord
 
 [pager]
 pager = LESS='FRX' less

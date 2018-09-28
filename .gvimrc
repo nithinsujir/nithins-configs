@@ -73,7 +73,7 @@ set backupdir=/tmp
 set cinoptions+=l1
 set cinoptions+=t0
 set cinoptions+=:0
-set noexpandtab
+set expandtab
 set gdefault
 set hlsearch
 set ignorecase
@@ -82,13 +82,13 @@ set noeol
 set nu
 set ruler
 set scrolloff=3
-set shiftwidth=8
+set shiftwidth=2
 set showcmd
 set smartcase
 set smartindent
-set softtabstop=8
+set softtabstop=2
 set switchbuf=usetab
-set ts=8
+set ts=2
 set wildignore=*.o,*.swp,*.bak,*.pyc
 set wildignorecase
 set wildmode=list:longest
@@ -267,7 +267,7 @@ vnoremap fj <Esc>
 "set guifont=7x14
 "set guifont=Monospace\ 10
 "set guifont=Liberation\ Mono\ 9.4
-set guifont=Inconsolata\ 13
+set guifont=Inconsolata\ 14
 
 runtime ftplugin/man.vim
 
@@ -309,28 +309,26 @@ autocmd InsertEnter *.c,*.h 3match TrailSpace /\s\+\%#\@<!$/
 autocmd InsertLeave *.c,*.h 3match TrailSpace /\s\+$/
 autocmd BufWinLeave call clearmatches()
 
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set softtabstop=4
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set tabstop=4
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set shiftwidth=4
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set softtabstop=2
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set tabstop=2
+autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set shiftwidth=2
 autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set expandtab
 
-autocmd BufWinLeave *.cpp,*.java set softtabstop=8
-autocmd BufWinLeave *.cpp,*.java set tabstop=8
-autocmd BufWinLeave *.cpp,*.java set shiftwidth=8
+autocmd BufWinLeave *.cpp,*.java set softtabstop=2
+autocmd BufWinLeave *.cpp,*.java set tabstop=2
+autocmd BufWinLeave *.cpp,*.java set shiftwidth=2
 autocmd BufWinLeave *.cpp,*.java set noexpandtab
 
 if version >= 703
-	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cpp,*.java set colorcolumn=81
+	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cpp,*.java set colorcolumn=101
 endif
 
-autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%81v.*/
+autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%101v.*/
 
 autocmd BufWinEnter,BufCreate,BufRead RELEASE.TXT set expandtab
 autocmd BufWinEnter,BufCreate,BufRead ChangeLog set expandtab
 
-autocmd BufRead,BufNewFile tools/scripts/* set ts=4 shiftwidth=4 softtabstop=4
-autocmd BufRead,BufNewFile scripts/tools/* set ts=4 shiftwidth=4 softtabstop=4
-autocmd BufRead,BufNewFile scripts/common/* set ts=4 shiftwidth=4 softtabstop=4
+"autocmd BufRead,BufNewFile tools/scripts/* set ts=4 shiftwidth=4 softtabstop=4
 
 " ==============================================================================
 " Save windows size/position

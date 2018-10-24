@@ -2,11 +2,8 @@
 export esn=/etc/sysconfig/network-scripts
 
 #export PATH=.:/usr/local/sbin:/usr/bin/:/usr/local/bin:/sbin:/usr/sbin:$HOME/bin:$PATH
-#export P4USER=nsujir
-#export P4PASSWD=f
-#export P4CLIENT=nsujir-nl2
 #export P4EDITOR=vim 
-#export P4DIFF='gvimdiff -f'
+export P4DIFF='diff --color -bru'
 export P4MERGE=$HOME/bin/kdiff3.sh
 
 export VISUAL=vim

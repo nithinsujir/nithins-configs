@@ -297,7 +297,7 @@ highlight SpcTab ctermbg=LightBlue ctermfg=white guibg=LightBlue guifg=white
 highlight OverLength ctermbg=Red ctermfg=white guibg=Red guifg=white
 
 autocmd BufWinEnter,BufCreate,BufRead *.c,*.h match SpcTab / \+	/
-autocmd BufRead,BufNewFile *.c set ts=8 shiftwidth=8 softtabstop=8 noexpandtab
+"autocmd BufRead,BufNewFile *.c set ts=8 shiftwidth=8 softtabstop=8 noexpandtab
 
 if version >= 703
 	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h highlight colorcolumn ctermbg=LightCyan guibg=LightCyan ctermfg=Black guifg=Purple
@@ -309,10 +309,10 @@ autocmd InsertEnter *.c,*.h 3match TrailSpace /\s\+\%#\@<!$/
 autocmd InsertLeave *.c,*.h 3match TrailSpace /\s\+$/
 autocmd BufWinLeave call clearmatches()
 
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set softtabstop=2
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set tabstop=2
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set shiftwidth=2
-autocmd BufWinEnter,BufCreate,BufRead *.cpp,*.java set expandtab
+autocmd BufWinEnter,BufCreate,BufRead *.py,*.cpp,*.java set softtabstop=2
+autocmd BufWinEnter,BufCreate,BufRead *.py,*.cpp,*.java set tabstop=2
+autocmd BufWinEnter,BufCreate,BufRead *.py,*.cpp,*.java set shiftwidth=2
+autocmd BufWinEnter,BufCreate,BufRead *.py,*.cpp,*.java set expandtab
 
 autocmd BufWinLeave *.cpp,*.java set softtabstop=2
 autocmd BufWinLeave *.cpp,*.java set tabstop=2

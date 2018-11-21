@@ -15,8 +15,18 @@ Plugin 'will133/vim-dirdiff'
 Plugin 'EasyMotion'
 Plugin 'QFixToggle'
 Plugin 'wincent/command-t'
-Plugin 'fatih/vim-go'
+"let g:CommandTFileScanner = 'watchman'
 
+Plugin 'fatih/vim-go'
+Plugin 'syntastic'
+Plugin 'ctrlpvim/ctrlp'
+set runtimepath+=~/.vim/bundle/ctrlp.vim
+
+Plugin 'junegunn/fzf.vim'
+set rtp+=~/.fzf
+
+Plugin 'prabirshrestha/async.vim'
+Plugin 'prabirshrestha/vim-lsp'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -134,7 +144,7 @@ noremap <M-o> zo
 noremap <M-p> :colder<CR>
 noremap <M-r> ddkA<Space>{<C-m>}<Esc>kpO
 noremap <M-s> :cs find s 
-noremap <M-t> :TlistToggle<C-m><C-w>h
+noremap <M-t> :TlistToggle<CR><C-w>h<Esc>
 noremap <M-u> :mksession! .gvimsession<CR>
 noremap <M-w> @q
 nmap <C-n> :set invnumber<C-m>
@@ -174,7 +184,7 @@ noremap <M-Space> <C-u>
 noremap <C-d> :bd<C-m>
 "noremap <C-f> :FF<C-m><C-x><C-o>
 "noremap <C-f> :FufCoverageFileRegister<CR>.fufcache/*<CR><Esc>f<CR>:FufCoverageFileChange f<CR>
-noremap <C-f> :CommandT<CR>
+noremap <C-f> :FZF<CR>
 noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
@@ -280,8 +290,6 @@ hi PmenuSel       guifg=black     guibg=#ffbc29
 
 
 "autocmds
-"autocmd GUIENTER * winpos 1925 0
-"autocmd GUIENTER * set lines=64 columns=265
 autocmd BufRead,BufNewFile *.c,*.cpp,*.h set cindent
 autocmd BufRead,BufNewFile *.c,*.cpp,*.h set noexpandtab
 

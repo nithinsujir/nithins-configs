@@ -142,3 +142,5 @@ TERM=xterm-256color
 if [ -f ~/.bash_local ]; then
     . ~/.bash_local
 fi
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

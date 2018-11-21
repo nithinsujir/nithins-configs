@@ -34,6 +34,14 @@ gie() {
 	git format-patch -s -o $dest/ -$count
 }
 
+# git export count changes
+gif() {
+	local cur_branch=$(git rev-parse --abbrev-ref HEAD)
+	local dest="$HOME/patches/$cur_branch/$(date +'%b-%d__%H.%M')"
+	mkdir -p $dest
+	git format-patch -s -o $dest/ $@
+}
+
 parse_hg_branch() {
     local curdir=`pwd`
 
@@ -298,13 +306,5 @@ dsh() {
 dat() {
 	local cont=txcon-${1:-cen68}
 	docker attach $cont
-}
-
-g4c() {
-  g4 changes --files -L "$@" | less
-}
-
-g4nc() {
-  g4c -u nsujir "$@"
 }
 

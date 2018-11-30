@@ -16,6 +16,7 @@ Plugin 'EasyMotion'
 Plugin 'QFixToggle'
 Plugin 'wincent/command-t'
 "let g:CommandTFileScanner = 'watchman'
+let g:CommandTCancelMap = ['<ESC>', '<C-c>']
 
 Plugin 'fatih/vim-go'
 Plugin 'syntastic'
@@ -221,7 +222,7 @@ noremap <S-k> :call ViewMan()<CR>
 noremap <C-c> :cs find c <C-R>=expand("<cword>")<CR><CR>
 "noremap <C-d> :cs find d <C-R>=expand("<cword>")<CR><CR>
 noremap <C-e> :cs find e <C-R>=expand("<cword>")<CR><CR>
-noremap <C-g> :cs find g <C-R>=expand("<cword>")<CR><CR>
+noremap <C-b> :cs find g <C-R>=expand("<cword>")<CR><CR>
 noremap <C-s> :cs find s <C-R>=expand("<cword>")<CR><CR>
 
 "Misc Mappings
@@ -328,10 +329,10 @@ autocmd BufWinLeave *.cpp,*.java set shiftwidth=2
 autocmd BufWinLeave *.cpp,*.java set noexpandtab
 
 if version >= 703
-	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cpp,*.java set colorcolumn=101
+	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cpp,*.java set colorcolumn=81
 endif
 
-autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%101v.*/
+autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%81v.*/
 
 autocmd BufWinEnter,BufCreate,BufRead RELEASE.TXT set expandtab
 autocmd BufWinEnter,BufCreate,BufRead ChangeLog set expandtab

@@ -51,3 +51,5 @@ fuf.files
 .vim/bundle
 a.out
 *~
+.python-version
+

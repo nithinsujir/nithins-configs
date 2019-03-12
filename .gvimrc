@@ -129,24 +129,18 @@ let g:locateopen_ignorecase = 1
 
 "Alphabet Alt Mappings
 noremap <M-a> :!cscope -bv<CR>:cs r<CR><CR>
-"noremap <M-b> :FufBuffer<C-m>
 noremap <M-b> :CommandTBuffer<CR>
 noremap <M-c> I/*<Esc>A*/<Esc>
 noremap <M-d> ^xx$xx
-noremap <M-e> :cs find e 
 noremap <M-f> :wa<CR>
 noremap <M-g> :cs find g 
-noremap <M-i> zc
 noremap <M-k> ddkA<Space>{<C-m>}<Esc>kpo
 noremap <M-l> [{zf%
-noremap <M-m> :make<CR>
 nnoremap <M-n> :noh<CR>
 noremap <M-o> zo
 noremap <M-p> :colder<CR>
 noremap <M-r> ddkA<Space>{<C-m>}<Esc>kpO
-noremap <M-s> :cs find s 
 noremap <M-t> :TlistToggle<CR><C-w>h<Esc>
-noremap <M-u> :mksession! .gvimsession<CR>
 noremap <M-w> @q
 nmap <C-n> :set invnumber<C-m>
 
@@ -183,8 +177,6 @@ noremap <M-Space> <C-u>
 
 "Alphabet Ctrl Mappings
 noremap <C-d> :bd<C-m>
-"noremap <C-f> :FF<C-m><C-x><C-o>
-"noremap <C-f> :FufCoverageFileRegister<CR>.fufcache/*<CR><Esc>f<CR>:FufCoverageFileChange f<CR>
 noremap <C-f> :FZF<CR>
 noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
@@ -329,10 +321,12 @@ autocmd BufWinLeave *.cpp,*.java set shiftwidth=2
 autocmd BufWinLeave *.cpp,*.java set noexpandtab
 
 if version >= 703
-	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cpp,*.java set colorcolumn=81
+	autocmd BufWinEnter,BufCreate,BufRead *.c,*.h,*.cc,*.cpp set colorcolumn=81
+	autocmd BufWinEnter,BufCreate,BufRead *.java set colorcolumn=101
 endif
 
-autocmd BufWinEnter,BufCreate,BufRead *.c,*.h 2match OverLength /\%81v.*/
+autocmd BufWinEnter,BufCreate,BufRead *.c,*.cc,*.cpp,*.h 2match OverLength /\%81v.*/
+autocmd BufWinEnter,BufCreate,BufRead *.java 2match OverLength /\%101v.*/
 
 autocmd BufWinEnter,BufCreate,BufRead RELEASE.TXT set expandtab
 autocmd BufWinEnter,BufCreate,BufRead ChangeLog set expandtab
